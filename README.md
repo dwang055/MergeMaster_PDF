@@ -4,7 +4,7 @@
 
 MergeMaster PDF is a single-file web app (`MergeMaster_PDF.html`) from **Words That Think · 品词坊 · 以词启思**. Open it, drop in your files, and get a finished PDF. All processing happens on your own device, so it is safe for student work, reports and private documents.
 
-**Try it:** https://dwang055.github.io/Main/MergeMaster_PDF.html
+**Try it:** https://dwang055.github.io/MergeMaster_PDF/
 
 ---
 
