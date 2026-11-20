@@ -19,6 +19,7 @@ MergeMaster PDF is a single-file web app (`MergeMaster_PDF.html`) from **Words T
 - Page manager with thumbnails for each file
 - Delete and restore pages, rotate pages, reorder pages
 - Insert one or many blank pages anywhere, including at the start
+- Insert pages from another PDF or a picture (JPG, PNG, HEIC…) anywhere inside a file, e.g. a signed form between pages 3 and 4. Choose all pages or just some (e.g. `1-3, 5`)
 - Extract selected pages with ranges such as `1-3, 5, 8-`
 
 ### Finish
@@ -69,8 +70,9 @@ Files are read and processed entirely in your browser. There is no server, no ac
 
 ## Deploying on GitHub Pages
 
-The app is one HTML file, so there is nothing to build. Put `MergeMaster_PDF.html` in your repository, enable **Settings → Pages**, and it is live at `https://<username>.github.io/<repo>/MergeMaster_PDF.html`.
+The app is one HTML file, so there is nothing to build. Put `MergeMaster_PDF.html` in your repository, enable **Settings → Pages**, and it is live at `https://<username>.github.io/<repo>/`. Name the file `index.html` so the address needs no file name.
 
 ---
 
 © Daniel Wang · Words That Think. All rights reserved.
+More apps: https://github.com/dwang055?tab=repositories

@@ -345,6 +345,11 @@
         .page-actions button:hover:not(:disabled) { border-color:var(--primary); color:var(--primary); }
         .page-actions button:disabled { opacity:0.35; cursor:default; }
         .page-actions-2 { padding-top:0; }
+        .page-actions button.page-add-file { color:var(--primary); border-style:dashed; font-size:0.75rem; }
+        .page-actions button.page-add-file:hover { border-color:var(--primary); background:var(--primary-light); }
+        .page-card-inserted { border-color:var(--primary); box-shadow:inset 0 0 0 1px var(--primary-light); }
+        .page-card-inserted .page-number { color:var(--primary); font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding:0 4px; }
+        .file-item .file-meta .badge.inserted { background:var(--primary-light); color:var(--primary); }
         .page-card.deleted .page-del-btn { color:var(--success); border-color:var(--success); }
         .thumb-loading { font-size:0.7rem; color:var(--gray-400); }
         .pm-toolbar { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:8px; padding-bottom:10px; border-bottom:1px solid var(--gray-200); }
@@ -574,6 +579,7 @@
                     <div class="footer-tagline">以词启思 · Tools for thinking readers, writers and teachers</div>
                 </div>
                 <div class="footer-links">
+                    <a href="https://github.com/dwang055?tab=repositories" target="_blank" rel="noopener">More Words That Think apps ↗</a>
                     <details class="footer-credits">
                         <summary>Open-source credits</summary>
                         <p>Built with pdf-lib (@cantoo fork, MIT licence), PDF.js by Mozilla (Apache 2.0) and Tesseract.js (Apache 2.0). With thanks to their authors.</p>
@@ -582,7 +588,7 @@
             </div>
             <div class="footer-bottom">
                 <span>© <span id="footerYear">2026</span> Daniel Wang · Words That Think. All rights reserved.</span>
-                <span>MergeMaster PDF · version 3.0</span>
+                <span>MergeMaster PDF · version 3.1</span>
             </div>
         </footer>
     </div>
@@ -602,7 +608,9 @@
                 </label>
                 <button class="btn-clear" id="btnAddBulkBlanks" type="button" style="border:1px solid var(--gray-200);">+ Add</button>
                 <button class="btn-clear pm-btn" id="btnInsertBlankStart" type="button">+ Blank page at start</button>
-                <span style="font-size:0.75rem;color:var(--gray-500);">or tap "+ Blank" on any page to insert one after it</span>
+                <button class="btn-clear pm-btn" id="btnInsertFileStart" type="button" style="color:var(--primary);border-color:var(--primary);">+ PDF / picture at start</button>
+                <input type="file" id="insertFileInput" accept=".pdf,application/pdf,image/*,.heic,.heif" multiple hidden>
+                <span style="font-size:0.75rem;color:var(--gray-500);">or tap "+ Blank" / "+ File" under any page to insert after it</span>
             </div>
             <div class="pm-toolbar">
                 <button class="btn-clear pm-btn" id="btnRotateAll" type="button">⟳ Rotate all 90°</button>
@@ -713,6 +721,8 @@
             const btnRestoreRange = document.getElementById('btnRestoreRange');
             const btnResetPages = document.getElementById('btnResetPages');
             const btnInsertBlankStart = document.getElementById('btnInsertBlankStart');
+            const btnInsertFileStart = document.getElementById('btnInsertFileStart');
+            const insertFileInput = document.getElementById('insertFileInput');
             const btnAddBulkBlanks = document.getElementById('btnAddBulkBlanks');
 
             // New: PDF viewer / add-text editor
@@ -1192,7 +1202,9 @@
                         blankPagesAfter: 0,  // count of blank pages appended after this file's pages
                         // order: positive numbers are source pages (1-based); negative numbers are
                         // user-inserted blank pages, so blanks can sit anywhere and be reordered.
-                        pageStates: { deleted: new Set(), rotations: new Map(), order: [], nextBlankId: -1 }
+                        // inserted: negative ids that are pages taken from another PDF or picture
+                        // (id → { src, page }); any other negative id is a blank page.
+                        pageStates: { deleted: new Set(), rotations: new Map(), order: [], nextBlankId: -1, inserted: new Map(), insertedSources: [] }
                     };
                     files.push(entry);
                     renderFileList();
@@ -1245,6 +1257,11 @@
                 if (entry.pdfJsPromise) entry.pdfJsPromise.then(d => { try { d.destroy(); } catch (e) {} }).catch(() => {});
                 entry.pdfJsPromise = null;
                 if (entry.thumbs) entry.thumbs.clear();
+                ((entry.pageStates && entry.pageStates.insertedSources) || []).forEach(src => {
+                    if (src.pdfJsPromise) src.pdfJsPromise.then(d => { try { d.destroy(); } catch (e) {} }).catch(() => {});
+                    src.pdfJsPromise = null;
+                    src.thumbs.clear();
+                });
                 if (currentPageManagerFileId === entry.id) closePageManager();
             }
 
@@ -1348,7 +1365,11 @@
             btnRotateAll.addEventListener('click', () => {
                 const entry = currentPageManagerEntry();
                 if (!entry) return;
-                for (let p = 1; p <= entry.pageCount; p++) {
+                ensureInsertState(entry);
+                const ids = [];
+                for (let p = 1; p <= entry.pageCount; p++) ids.push(p);
+                entry.pageStates.inserted.forEach((_, id) => ids.push(id));
+                for (const p of ids) {
                     const next = ((entry.pageStates.rotations.get(p) || 0) + 90) % 360;
                     if (next) entry.pageStates.rotations.set(p, next); else entry.pageStates.rotations.delete(p);
                 }
@@ -1374,11 +1395,115 @@
             btnResetPages.addEventListener('click', () => {
                 const entry = currentPageManagerEntry();
                 if (!entry) return;
-                if (!confirm('Undo all page changes for this file (deletions, rotations, reordering and inserted blank pages)?')) return;
+                if (!confirm('Undo all page changes for this file (deletions, rotations, reordering, inserted blank pages and pages inserted from other files)?')) return;
                 entry.pageStates.deleted.clear();
                 entry.pageStates.rotations.clear();
                 entry.pageStates.order = Array.from({ length: entry.pageCount }, (_, idx) => idx + 1);
+                ensureInsertState(entry);
+                entry.pageStates.insertedSources.forEach(src => {
+                    if (src.pdfJsPromise) src.pdfJsPromise.then(d => { try { d.destroy(); } catch (e) {} }).catch(() => {});
+                });
+                entry.pageStates.inserted.clear();
+                entry.pageStates.insertedSources = [];
                 pageStateChanged(entry);
+            });
+
+            // ============ INSERT PAGES FROM ANOTHER PDF OR PICTURE ============
+            // New: pages from another PDF, or a photo/picture (JPG, PNG, HEIC…), can be
+            // inserted anywhere inside a file — e.g. a signed form between pages 3 and 4 —
+            // instead of only adding it as a separate file at the end of the list. Inserted
+            // pages behave like the file's own pages: drag/◀ ▶ to move, rotate, remove.
+            function ensureInsertState(entry) {
+                const ps = entry.pageStates;
+                if (!(ps.inserted instanceof Map)) ps.inserted = new Map();
+                if (!Array.isArray(ps.insertedSources)) ps.insertedSources = [];
+                if (typeof ps.nextBlankId !== 'number') ps.nextBlankId = -1;
+            }
+            function countBlankIds(entry) {
+                const ins = entry.pageStates.inserted;
+                return (entry.pageStates.order || []).filter(n => n < 0 && !(ins && ins.has(n))).length;
+            }
+            function countInsertedIds(entry) {
+                const ins = entry.pageStates.inserted;
+                return ins ? (entry.pageStates.order || []).filter(n => ins.has(n)).length : 0;
+            }
+
+            let pendingInsert = null;
+            function startInsertFromFile(entry, position) {
+                pendingInsert = { entryId: entry.id, position };
+                insertFileInput.value = '';
+                insertFileInput.click();
+            }
+            insertFileInput.addEventListener('change', async () => {
+                const pending = pendingInsert;
+                pendingInsert = null;
+                const picked = Array.from(insertFileInput.files || []);
+                insertFileInput.value = '';
+                if (!pending || picked.length === 0) return;
+                const entry = files.find(f => f.id === pending.entryId);
+                if (!entry) return;
+                await insertPagesFromFiles(entry, picked, pending.position);
+            });
+
+            async function insertPagesFromFiles(entry, picked, position) {
+                if (!isPdfLibAvailable()) { alert('PDF library not loaded.'); return; }
+                ensureInsertState(entry);
+                const ps = entry.pageStates;
+                let pos = Math.max(0, Math.min(position, ps.order.length));
+                let added = 0;
+                const problems = [];
+                const busyNote = pageManagerSummary.textContent;
+                pageManagerSummary.textContent = 'Adding pages…';
+                btnInsertFileStart.disabled = true;
+                try {
+                    for (const file of picked) {
+                        if (!isPdfFile(file) && !isImageFile(file)) { problems.push(`${file.name}: not a PDF or picture`); continue; }
+                        try {
+                            let buffer = isPdfFile(file) ? await file.arrayBuffer() : (await imageFileToPdfBytes(file)).buffer;
+                            const result = await getPdfDoc(buffer, file.name);
+                            if (!result.doc) { problems.push(`${file.name}: ${result.error}`); continue; }
+                            if (result.unlockedBytes) buffer = result.unlockedBytes.buffer;
+                            const count = result.doc.getPageCount();
+                            if (count === 0) { problems.push(`${file.name}: has no pages`); continue; }
+                            let pages = Array.from({ length: count }, (_, k) => k + 1);
+                            if (count > 1) {
+                                const answer = window.prompt(
+                                    `"${file.name}" has ${count} pages. Which pages should be inserted?\n` +
+                                    'Keep "all", or type pages such as 1-3, 5.', 'all');
+                                if (answer === null) continue;                 // cancelled this file
+                                const a = answer.trim();
+                                if (a && !/^all$/i.test(a)) {
+                                    const parsed = parsePageRanges(a, count);
+                                    if (parsed.pages.length === 0) { problems.push(`${file.name}: no valid page numbers in "${a}"`); continue; }
+                                    pages = parsed.pages;
+                                }
+                            }
+                            const src = { name: file.name, doc: result.doc, buffer, thumbs: new Map(), pdfJsPromise: null };
+                            ps.insertedSources.push(src);
+                            for (const pg of pages) {
+                                const id = ps.nextBlankId--;
+                                ps.inserted.set(id, { src, page: pg });
+                                ps.order.splice(pos++, 0, id);
+                                added++;
+                            }
+                        } catch (err) {
+                            problems.push(`${file.name}: ${describeError(err) || 'could not be read'}`);
+                        }
+                    }
+                } finally {
+                    btnInsertFileStart.disabled = false;
+                    pageManagerSummary.textContent = busyNote;
+                }
+                if (currentPageManagerFileId === entry.id) pageStateChanged(entry);
+                else { hideResult(); renderFileList(); updateUI(); }
+                if (problems.length) {
+                    alert((added ? `Inserted ${added} page(s). ` : 'No pages were inserted. ') +
+                          'Not added:\n• ' + problems.join('\n• '));
+                }
+            }
+            btnInsertFileStart.addEventListener('click', () => {
+                const entry = currentPageManagerEntry();
+                if (entry) startInsertFromFile(entry, 0);
             });
 
             // ============ VIEW MERGED PDF / ADD TEXT ============
@@ -1972,7 +2097,8 @@
                 if (!entry.pageStates.order || positiveCount !== entry.pageCount) {
                     entry.pageStates.order = Array.from({ length: entry.pageCount }, (_, idx) => idx + 1);
                 }
-                if (typeof entry.pageStates.nextBlankId !== 'number') entry.pageStates.nextBlankId = -1;
+                ensureInsertState(entry);
+                const insertedMap = entry.pageStates.inserted;
                 if (!entry.thumbs) entry.thumbs = new Map();
 
                 if (pageGridObserver) pageGridObserver.disconnect();
@@ -2008,6 +2134,50 @@
                     btn.addEventListener('click', () => insertBlankAt(position));
                     return btn;
                 };
+                const makeFileButton = (position) => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'page-add-file';
+                    btn.textContent = '+ File';
+                    btn.title = 'Insert pages from a PDF or picture after this one';
+                    btn.setAttribute('aria-label', `Insert pages from a PDF or picture after position ${position}`);
+                    btn.addEventListener('click', () => startInsertFromFile(entry, position));
+                    return btn;
+                };
+                const insertRow = (position) => {
+                    const row = document.createElement('div');
+                    row.className = 'page-actions page-actions-2';
+                    row.append(makeInsertButton(position), makeFileButton(position));
+                    return row;
+                };
+                const removeFromOrder = (id) => {
+                    const idx = order.indexOf(id);
+                    if (idx !== -1) order.splice(idx, 1);
+                    insertedMap.delete(id);
+                    entry.pageStates.rotations.delete(id);
+                    pageStateChanged(entry);
+                };
+                const rotateButtons = (id, rotation, labelText) => {
+                    const rotL = document.createElement('button');
+                    rotL.textContent = '⟲';
+                    rotL.title = 'Rotate left 90°';
+                    rotL.setAttribute('aria-label', `Rotate ${labelText} left 90 degrees`);
+                    rotL.addEventListener('click', () => {
+                        entry.pageStates.rotations.set(id, ((rotation - 90) % 360 + 360) % 360);
+                        if (!entry.pageStates.rotations.get(id)) entry.pageStates.rotations.delete(id);
+                        pageStateChanged(entry);
+                    });
+                    const rotR = document.createElement('button');
+                    rotR.textContent = '⟳';
+                    rotR.title = 'Rotate right 90°';
+                    rotR.setAttribute('aria-label', `Rotate ${labelText} right 90 degrees`);
+                    rotR.addEventListener('click', () => {
+                        entry.pageStates.rotations.set(id, (rotation + 90) % 360);
+                        if (!entry.pageStates.rotations.get(id)) entry.pageStates.rotations.delete(id);
+                        pageStateChanged(entry);
+                    });
+                    return [rotL, rotR];
+                };
                 const moveButtons = (id, pos) => {
                     const left = document.createElement('button');
                     left.textContent = '◀';
@@ -2038,7 +2208,33 @@
                     actions.className = 'page-actions';
                     const [leftBtn, rightBtn] = moveButtons(id, pos);
 
-                    if (id < 0) {
+                    if (id < 0 && insertedMap.has(id)) {
+                        const info = insertedMap.get(id);
+                        const rotation = entry.pageStates.rotations.get(id) || 0;
+                        card.className = 'page-card page-card-inserted';
+                        label.textContent = `#${pos + 1} · ${info.src.name}` +
+                            (info.src.doc.getPageCount() > 1 ? ` p.${info.page}` : '') + (rotation ? ` · ${rotation}°` : '');
+                        label.title = `Inserted from ${info.src.name} — drag (or use ◀ ▶) to reorder`;
+                        const cached = info.src.thumbs.get(info.page);
+                        if (cached) {
+                            drawThumbInto(thumbWrap, cached, rotation);
+                        } else {
+                            thumbWrap.innerHTML = '<span class="thumb-loading">Loading…</span>';
+                            thumbWrap._thumbJob = { entry: info.src, pageNum: info.page, rotation, wrap: thumbWrap };
+                            pageGridObserver.observe(thumbWrap);
+                        }
+                        const [rotL, rotR] = rotateButtons(id, rotation, 'this inserted page');
+                        actions.append(leftBtn, rotL, rotR, rightBtn);
+                        const actions2 = document.createElement('div');
+                        actions2.className = 'page-actions page-actions-2';
+                        const removeBtn = document.createElement('button');
+                        removeBtn.textContent = 'Remove';
+                        removeBtn.className = 'page-del-btn';
+                        removeBtn.setAttribute('aria-label', 'Remove this inserted page');
+                        removeBtn.addEventListener('click', () => removeFromOrder(id));
+                        actions2.appendChild(removeBtn);
+                        card.append(label, thumbWrap, actions, actions2, insertRow(pos + 1));
+                    } else if (id < 0) {
                         card.className = 'page-card page-card-blank';
                         label.textContent = `#${pos + 1} · blank page`;
                         const blankThumb = document.createElement('div');
@@ -2048,16 +2244,9 @@
                         const removeBtn = document.createElement('button');
                         removeBtn.textContent = 'Remove';
                         removeBtn.setAttribute('aria-label', 'Remove this blank page');
-                        removeBtn.addEventListener('click', () => {
-                            const idx = order.indexOf(id);
-                            if (idx !== -1) order.splice(idx, 1);
-                            pageStateChanged(entry);
-                        });
+                        removeBtn.addEventListener('click', () => removeFromOrder(id));
                         actions.append(leftBtn, removeBtn, rightBtn);
-                        const actions2 = document.createElement('div');
-                        actions2.className = 'page-actions page-actions-2';
-                        actions2.appendChild(makeInsertButton(pos + 1));
-                        card.append(label, thumbWrap, actions, actions2);
+                        card.append(label, thumbWrap, actions, insertRow(pos + 1));
                     } else {
                         const isDeleted = entry.pageStates.deleted.has(id);
                         const rotation = entry.pageStates.rotations.get(id) || 0;
@@ -2071,24 +2260,7 @@
                             thumbWrap._thumbJob = { entry, pageNum: id, rotation, wrap: thumbWrap };
                             pageGridObserver.observe(thumbWrap);
                         }
-                        const rotL = document.createElement('button');
-                        rotL.textContent = '⟲';
-                        rotL.title = 'Rotate left 90°';
-                        rotL.setAttribute('aria-label', `Rotate page ${id} left 90 degrees`);
-                        rotL.addEventListener('click', () => {
-                            entry.pageStates.rotations.set(id, ((rotation - 90) % 360 + 360) % 360);
-                            if (!entry.pageStates.rotations.get(id)) entry.pageStates.rotations.delete(id);
-                            pageStateChanged(entry);
-                        });
-                        const rotR = document.createElement('button');
-                        rotR.textContent = '⟳';
-                        rotR.title = 'Rotate right 90°';
-                        rotR.setAttribute('aria-label', `Rotate page ${id} right 90 degrees`);
-                        rotR.addEventListener('click', () => {
-                            entry.pageStates.rotations.set(id, (rotation + 90) % 360);
-                            if (!entry.pageStates.rotations.get(id)) entry.pageStates.rotations.delete(id);
-                            pageStateChanged(entry);
-                        });
+                        const [rotL, rotR] = rotateButtons(id, rotation, `page ${id}`);
                         const del = document.createElement('button');
                         del.textContent = isDeleted ? 'Restore' : 'Delete';
                         del.className = 'page-del-btn';
@@ -2101,8 +2273,8 @@
                         actions.append(leftBtn, rotL, rotR, rightBtn);
                         const actions2 = document.createElement('div');
                         actions2.className = 'page-actions page-actions-2';
-                        actions2.append(del, makeInsertButton(pos + 1));
-                        card.append(label, thumbWrap, actions, actions2);
+                        actions2.appendChild(del);
+                        card.append(label, thumbWrap, actions, actions2, insertRow(pos + 1));
                     }
                     attachPageDragHandlers(entry, card, id);
                     frag.appendChild(card);
@@ -2117,11 +2289,14 @@
             }
 
             function updatePageManagerSummary(entry) {
-                const blanks = entry.pageStates.order.filter(n => n < 0).length;
+                const blanks = countBlankIds(entry);
+                const inserted = countInsertedIds(entry);
                 const kept = entry.pageCount - entry.pageStates.deleted.size;
                 pageManagerSummary.textContent =
                     `${entry.pageCount} original pages · ${entry.pageStates.deleted.size} deleted · ` +
-                    `${entry.pageStates.rotations.size} rotated · ${blanks} blank inserted → ${kept + blanks} pages from this file`;
+                    `${entry.pageStates.rotations.size} rotated · ${blanks} blank inserted` +
+                    (inserted ? ` · ${inserted} inserted from other files` : '') +
+                    ` → ${kept + blanks + inserted} pages from this file`;
             }
 
             // ============ RENDER FILE LIST ============
@@ -2157,6 +2332,7 @@
                                 ${fileEntry.unlocked ? '<span class="badge" title="This file was password-protected and has been unlocked for merging">🔓 unlocked</span>' : ''}
                                 ${fileEntry.isImage ? '<span class="badge">image → A4 page</span>' : ''}
                                 ${fileEntry.blankPagesAfter > 0 ? `<span class="badge blank">+${fileEntry.blankPagesAfter} blank after</span>` : ''}
+                                ${countInsertedIds(fileEntry) > 0 ? `<span class="badge inserted">+${countInsertedIds(fileEntry)} inserted</span>` : ''}
                                 ${fileEntry.pageStates.deleted.size > 0 ? `<span class="badge">deleted: ${fileEntry.pageStates.deleted.size}</span>` : ''}
                                 ${fileEntry.pageStates.rotations.size > 0 ? `<span class="badge">rotations: ${fileEntry.pageStates.rotations.size}</span>` : ''}
                             </span>
@@ -2410,6 +2586,16 @@
                         // than a hardcoded size.
                         const blankPageSize = totalPages > 0 ? srcDoc.getPage(0).getSize() : { width: 612, height: 792 };
                         for (const i of order) {
+                            const insertedInfo = i < 0 && fileEntry.pageStates.inserted ? fileEntry.pageStates.inserted.get(i) : null;
+                            if (insertedInfo) {
+                                // Page inserted from another PDF or picture.
+                                const [insPage] = await mergedPdf.copyPages(insertedInfo.src.doc, [insertedInfo.page - 1]);
+                                const insRot = fileEntry.pageStates.rotations.get(i) || 0;
+                                if (insRot) insPage.setRotation(PDFLib.degrees(insPage.getRotation().angle + insRot));
+                                mergedPdf.addPage(insPage);
+                                await tickMergeProgress();
+                                continue;
+                            }
                             if (i < 0) {
                                 // User-inserted blank page marker from the page manager.
                                 mergedPdf.addPage([blankPageSize.width, blankPageSize.height]);
