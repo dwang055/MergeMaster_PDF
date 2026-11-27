@@ -189,7 +189,7 @@
         .file-item .file-meta .badge.loading { background:#fef3c7; color:#b45309; animation:pulse 1.2s infinite; }
         .file-item .file-meta .badge.error { background:var(--danger-light); color:var(--danger); }
         .file-item .file-meta .badge.blank { background:var(--success-light); color:var(--success); }
-        .file-item .file-actions { display:flex; gap:2px; flex-shrink:0; align-items:center; }
+        .file-item .file-actions { display:flex; gap:2px; flex-shrink:0; }
         .file-item .btn-icon {
             width:32px; height:32px; border:none; background:none; border-radius:8px;
             cursor:pointer; display:flex; align-items:center; justify-content:center;
@@ -249,9 +249,12 @@
         .preview-container { max-height:500px; overflow-y:auto; border:1px solid var(--gray-200); border-radius:var(--radius-sm); padding:10px; background:var(--gray-100); margin-bottom:16px; display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
         .preview-container canvas { box-shadow:0 2px 8px rgba(0,0,0,0.1); background:white; display:block; }
         .preview-page { position:relative; background:white; box-shadow:0 2px 8px rgba(0,0,0,0.1); flex:0 0 auto; }
+        /* Preview-only position tag, shown BELOW the page so it can't be mistaken for a
+           page number printed in the PDF (it isn't in the downloaded file). */
+        .preview-page { margin-bottom:18px; }
         .preview-page-label {
-            position:absolute; bottom:4px; right:6px; font-size:0.7rem; color:var(--gray-500);
-            background:rgba(255,255,255,0.85); padding:0 5px; border-radius:4px;
+            position:absolute; top:100%; left:0; right:0; margin-top:3px; text-align:center;
+            font-size:0.68rem; color:var(--gray-400); pointer-events:none;
         }
         .download-result { text-align:center; margin-top:16px; }
         .btn-download {
@@ -345,9 +348,6 @@
         .page-actions button:hover:not(:disabled) { border-color:var(--primary); color:var(--primary); }
         .page-actions button:disabled { opacity:0.35; cursor:default; }
         .page-actions-2 { padding-top:0; }
-        .btn-insert-pages { background:var(--primary-light); color:var(--primary); border:1px solid var(--primary); border-radius:6px; padding:3px 8px; font-size:0.75rem; font-weight:600; cursor:pointer; white-space:nowrap; }
-        .btn-insert-pages:hover:not(:disabled) { background:var(--primary); color:#fff; }
-        .btn-insert-pages:disabled { opacity:0.4; cursor:default; }
         .page-actions button.page-add-file { color:var(--primary); border-style:dashed; font-size:0.75rem; }
         .page-actions button.page-add-file:hover { border-color:var(--primary); background:var(--primary-light); }
         .page-card-inserted { border-color:var(--primary); box-shadow:inset 0 0 0 1px var(--primary-light); }
@@ -361,6 +361,31 @@
         .page-card button:hover { background:var(--gray-200); }
         .page-card .page-number { font-size:0.75rem; color:var(--gray-500); margin-bottom:2px; }
 
+        /* ===== v4 additions ===== */
+        .fl-tools { display:flex; flex-wrap:wrap; gap:4px; align-items:center; }
+        .btn-tool { background:white; border:1px solid var(--gray-200); color:var(--gray-600); font-size:0.78rem; cursor:pointer; padding:4px 8px; border-radius:6px; font-weight:500; font-family:var(--font); transition:var(--transition); }
+        .btn-tool:hover:not(:disabled) { border-color:var(--primary); color:var(--primary); background:var(--primary-light); }
+        .btn-tool:disabled { opacity:0.4; cursor:default; }
+        select.btn-tool { padding:4px 6px; }
+        .tool-status { font-size:0.78rem; color:var(--gray-500); margin:-4px 0 8px; min-height:0; }
+        .tool-status:empty { display:none; }
+        .section-title { font-weight:600; font-size:0.95rem; color:var(--gray-700); margin-bottom:12px; }
+        .check-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:8px 16px; margin:4px 0 14px; }
+        .check-label { display:flex; align-items:flex-start; gap:8px; font-size:0.85rem; color:var(--gray-700); cursor:pointer; line-height:1.35; margin:4px 0; }
+        .check-label input { width:16px; height:16px; accent-color:var(--primary); flex-shrink:0; margin-top:1px; }
+        .option-pair { display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:0 14px; }
+        .option-quad { display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:0 12px; }
+        .hint { font-size:0.75rem; color:var(--gray-500); line-height:1.45; }
+        .hf-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-bottom:8px; }
+        .hf-grid input { padding:9px 10px; border:1px solid var(--gray-300); border-radius:var(--radius-xs); font-size:0.85rem; font-family:var(--font); min-width:0; background:white; }
+        .hf-grid input:focus { outline:none; border-color:var(--primary); box-shadow:0 0 0 3px rgba(79,70,229,0.15); }
+        .hf-tokens { font-size:0.75rem; color:var(--gray-500); margin-bottom:14px; display:flex; flex-wrap:wrap; gap:4px; align-items:center; }
+        .hf-tokens button { font-family:ui-monospace, Menlo, monospace; font-size:0.72rem; border:1px solid var(--gray-200); background:white; color:var(--primary); border-radius:4px; padding:2px 6px; cursor:pointer; }
+        .hf-tokens button:hover { background:var(--primary-light); border-color:var(--primary); }
+        .result-stats { font-size:0.8rem; color:var(--gray-600); text-align:center; margin-top:10px; }
+        .result-stats:empty { display:none; }
+        .split-select { padding:8px 10px; border:1px solid var(--gray-300); border-radius:var(--radius-xs); font-family:var(--font); background:white; }
+        @media (max-width:600px) { .hf-grid { grid-template-columns:1fr; } }
         @keyframes spin { to { transform:rotate(360deg); } }
         @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
         @keyframes slideUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
@@ -369,9 +394,6 @@
         @media (max-width:600px) {
             .card { padding:20px; }
             .file-item { padding:10px 8px; gap:6px; }
-            /* Narrow screens: the buttons move to their own full-width row under the file name. */
-            .file-item { flex-wrap:wrap; }
-            .file-item .file-actions { flex-basis:100%; justify-content:flex-end; align-items:center; flex-wrap:wrap; gap:4px; }
         }
     </style>
 </head>
@@ -382,7 +404,7 @@
             <div>
                 <div class="brand-kicker">Words That Think <span>· 品词坊</span></div>
                 <h1>MergeMaster PDF</h1>
-                <p>Merge, organise, number, watermark, protect &amp; extract PDFs — right in your browser</p>
+                <p>Combine, organise, bookmark, Bates-number, compress, split &amp; protect PDFs — right in your browser</p>
             </div>
         </header>
 
@@ -398,8 +420,8 @@
                 <div class="dz-icon">
                     <svg viewBox="0 0 24 24"><path d="M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
                 </div>
-                <div class="dz-title">Drop PDF files or images here</div>
-                <div class="dz-subtitle">or <span class="dz-browse">browse your computer</span></div>
+                <div class="dz-title">Drop PDF files, images or whole folders here</div>
+                <div class="dz-subtitle">or <span class="dz-browse">browse your computer</span> · you can also paste (⌘/Ctrl+V)</div>
                 <input type="file" id="fileInput" accept=".pdf,application/pdf,image/*,.heic,.heif" multiple>
             </div>
 
@@ -407,17 +429,73 @@
             <div class="file-list-section" id="fileListSection">
                 <div class="file-list-header">
                     <div class="fl-title">Files to merge <span id="fileCount">0</span></div>
-                    <div>
+                    <div class="fl-tools">
+                        <button class="btn-tool" id="btnUndo" type="button" title="Undo (⌘/Ctrl+Z)" disabled>↶ Undo</button>
+                        <button class="btn-tool" id="btnRedo" type="button" title="Redo (⌘/Ctrl+Shift+Z)" disabled>↷ Redo</button>
+                        <select class="btn-tool" id="sortFiles" aria-label="Sort files">
+                            <option value="">Sort…</option>
+                            <option value="name-asc">Name A → Z (1, 2, 10)</option>
+                            <option value="name-desc">Name Z → A</option>
+                            <option value="date-old">Oldest first</option>
+                            <option value="date-new">Newest first</option>
+                            <option value="size-desc">Largest first</option>
+                            <option value="size-asc">Smallest first</option>
+                        </select>
+                        <button class="btn-tool" id="btnFindBlanksAll" type="button" title="Scan every file for blank pages (e.g. scanner back sides) and mark them deleted — undoable">🧹 Remove blank pages</button>
                         <button class="btn-clear" id="btnReverseOrder" title="Reverse file order">Reverse order</button>
                         <button class="btn-clear" id="btnClearAll" title="Remove all files">Clear all</button>
                     </div>
                 </div>
+                <div id="fileToolStatus" class="tool-status"></div>
                 <ul class="file-list" id="fileList"></ul>
+            </div>
+
+            <!-- Combine options -->
+            <div class="settings-section" id="combineSection">
+                <div class="section-title">Combine options</div>
+                <div class="option-row">
+                    <label for="mergeMode">How pages are combined</label>
+                    <select id="mergeMode">
+                        <option value="append">One file after another (standard)</option>
+                        <option value="interleave">Interleave — alternate pages: A1, B1, A2, B2…</option>
+                        <option value="duplex">Collate a double-sided scan — fronts file + backs file (backs scanned last-to-first)</option>
+                    </select>
+                </div>
+                <div class="check-grid">
+                    <label class="check-label"><input type="checkbox" id="chkBookmarks" checked> Bookmark each file</label>
+                    <label class="check-label"><input type="checkbox" id="chkKeepBookmarks" checked> Keep each file's own bookmarks (nested)</label>
+                    <label class="check-label"><input type="checkbox" id="chkToc"> Add a clickable table of contents page</label>
+                    <label class="check-label"><input type="checkbox" id="chkFlattenForms" checked> Flatten form fields (keeps filled-in answers)</label>
+                </div>
+                <div class="option-pair">
+                    <div class="option-row">
+                        <label for="pageSizeMode">Page size</label>
+                        <select id="pageSizeMode">
+                            <option value="keep">Keep each page's original size</option>
+                            <option value="first">Match the first page</option>
+                            <option value="a4">A4 (210 × 297 mm)</option>
+                            <option value="letter">US Letter (8.5 × 11 in)</option>
+                            <option value="legal">US Legal (8.5 × 14 in)</option>
+                            <option value="a3">A3 (297 × 420 mm)</option>
+                            <option value="a5">A5 (148 × 210 mm)</option>
+                        </select>
+                    </div>
+                    <div class="option-row">
+                        <label for="compressLevel">Reduce file size</label>
+                        <select id="compressLevel">
+                            <option value="off">Off — keep images untouched</option>
+                            <option value="light">Light — high quality (≈ 220 dpi)</option>
+                            <option value="balanced">Balanced — great for sharing (≈ 150 dpi)</option>
+                            <option value="strong">Strong — smallest for email (≈ 100 dpi)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="hint">Resized pages keep orientation and are scaled to fit, centred. File-size reduction only re-compresses photos and scans — text and vector graphics stay sharp and selectable.</div>
             </div>
 
             <!-- Settings preset persistence -->
             <label class="toggle-label" style="font-size:0.8rem;color:var(--gray-500);margin:4px 0 10px;">
-                <input type="checkbox" id="chkRememberSettings" checked> Remember watermark & page number settings on this device
+                <input type="checkbox" id="chkRememberSettings" checked> Remember my settings on this device (never passwords)
             </label>
 
             <!-- Page Number Settings -->
@@ -452,6 +530,44 @@
                         <label>Font size (pt)</label>
                         <input type="number" id="pageNumberFontSize" value="12" min="6" max="72">
                     </div>
+                    <label class="check-label"><input type="checkbox" id="chkPageLabels" checked> Make the PDF viewer's page box show these numbers too (skipped pages become i, ii, iii)</label>
+                </div>
+            </div>
+
+            <!-- Headers, footers & Bates numbering -->
+            <div class="settings-section" id="hfSection">
+                <label class="toggle-label"><input type="checkbox" id="chkHeaderFooter"> Add headers, footers &amp; Bates numbers</label>
+                <div class="options-panel" id="hfOptions">
+                    <div class="hf-grid">
+                        <input type="text" id="hfTL" placeholder="Header left" aria-label="Header left">
+                        <input type="text" id="hfTC" placeholder="Header centre" aria-label="Header centre">
+                        <input type="text" id="hfTR" placeholder="Header right" aria-label="Header right">
+                        <input type="text" id="hfBL" placeholder="Footer left" aria-label="Footer left">
+                        <input type="text" id="hfBC" placeholder="Footer centre" aria-label="Footer centre">
+                        <input type="text" id="hfBR" placeholder="Footer right — e.g. {bates}" aria-label="Footer right">
+                    </div>
+                    <div class="hf-tokens">Insert into the last box you clicked:
+                        <button type="button" data-token="{page}">{page}</button>
+                        <button type="button" data-token="{total}">{total}</button>
+                        <button type="button" data-token="{bates}">{bates}</button>
+                        <button type="button" data-token="{file}">{file}</button>
+                        <button type="button" data-token="{date}">{date}</button>
+                        <button type="button" data-token="{title}">{title}</button>
+                    </div>
+                    <div class="option-quad">
+                        <div class="option-row"><label for="batesPrefix">Bates prefix</label><input type="text" id="batesPrefix" value="DOC" placeholder="e.g. SMITH"></div>
+                        <div class="option-row"><label for="batesStart">Bates start</label><input type="number" id="batesStart" value="1" min="0"></div>
+                        <div class="option-row"><label for="batesDigits">Digits</label><input type="number" id="batesDigits" value="6" min="1" max="12"></div>
+                        <div class="option-row"><label for="batesSuffix">Bates suffix</label><input type="text" id="batesSuffix" placeholder="optional"></div>
+                    </div>
+                    <div class="option-quad">
+                        <div class="option-row"><label for="hfFontSize">Font size (pt)</label><input type="number" id="hfFontSize" value="9" min="5" max="48"></div>
+                        <div class="option-row"><label for="hfColor">Colour</label>
+                            <select id="hfColor"><option value="black">Black</option><option value="gray">Gray</option><option value="blue">Blue</option><option value="red">Red</option></select></div>
+                        <div class="option-row"><label for="hfMargin">Margin (pt)</label><input type="number" id="hfMargin" value="24" min="4" max="144"></div>
+                        <div class="option-row"><label for="hfSkip">Skip first … pages</label><input type="number" id="hfSkip" value="0" min="0"></div>
+                    </div>
+                    <div class="hint">{page}/{total} count from the first un-skipped page · {bates} = prefix + zero-padded number + suffix, e.g. DOC000001 · {file} = the source file each page came from.</div>
                 </div>
             </div>
 
@@ -517,6 +633,16 @@
                     <label for="metaAuthor">Author</label>
                     <input type="text" id="metaAuthor" placeholder="Your name">
                 </div>
+                <div class="option-pair">
+                    <div class="option-row">
+                        <label for="metaSubject">Subject</label>
+                        <input type="text" id="metaSubject" placeholder="optional">
+                    </div>
+                    <div class="option-row">
+                        <label for="metaKeywords">Keywords</label>
+                        <input type="text" id="metaKeywords" placeholder="comma, separated">
+                    </div>
+                </div>
             </div>
 
             <!-- Password Protection Settings -->
@@ -568,11 +694,24 @@
                     </button>
                     <button class="btn-clear" id="btnEditPdf" style="margin-left:8px;">✏️ View & Add Text</button>
                 </div>
+                <div id="resultStats" class="result-stats"></div>
                 <div class="extract-form">
                     <label for="extractPages">Extract pages:</label>
-                    <input type="text" id="extractPages" placeholder="e.g., 1-3,5">
+                    <input type="text" id="extractPages" placeholder="e.g. 1-3, 5, odd">
                     <input type="text" id="extractFilename" placeholder="extracted_pages.pdf" style="width:160px;">
                     <button id="btnExtract">Extract</button>
+                </div>
+                <div class="extract-form">
+                    <label for="splitMode">Split result:</label>
+                    <select id="splitMode" class="split-select">
+                        <option value="file">One PDF per source file</option>
+                        <option value="every">Every N pages</option>
+                        <option value="ranges">Custom ranges (1-3; 4-10; 11-end)</option>
+                        <option value="size">Max file size (MB) per part</option>
+                    </select>
+                    <input type="text" id="splitValue" placeholder="" style="width:170px;" aria-label="Split value">
+                    <button id="btnSplit">Split → .zip</button>
+                    <span id="splitStatus" class="tool-status" style="margin:0;"></span>
                 </div>
             </div>
         </div>
@@ -585,16 +724,16 @@
                     <div class="footer-tagline">以词启思 · Tools for thinking readers, writers and teachers</div>
                 </div>
                 <div class="footer-links">
-                    <a href="https://github.com/dwang055?tab=repositories" target="_blank" rel="noopener">More Words That Think apps ↗</a>
                     <details class="footer-credits">
                         <summary>Open-source credits</summary>
+                        <p>Shortcuts: ⌘/Ctrl+Z undo · ⌘/Ctrl+Shift+Z redo · ⌘/Ctrl+V paste files · Esc closes windows.</p>
                         <p>Built with pdf-lib (@cantoo fork, MIT licence), PDF.js by Mozilla (Apache 2.0) and Tesseract.js (Apache 2.0). With thanks to their authors.</p>
                     </details>
                 </div>
             </div>
             <div class="footer-bottom">
                 <span>© <span id="footerYear">2026</span> Daniel Wang · Words That Think. All rights reserved.</span>
-                <span>MergeMaster PDF · version 3.2</span>
+                <span>MergeMaster PDF · version 4.1</span>
             </div>
         </footer>
     </div>
@@ -622,11 +761,14 @@
                 <button class="btn-clear pm-btn" id="btnRotateAll" type="button">⟳ Rotate all 90°</button>
                 <label style="font-size:0.8rem;color:var(--gray-600);display:flex;align-items:center;gap:6px;">
                     Pages
-                    <input type="text" id="bulkRangeInput" placeholder="e.g. 2-5, 9, 12-end" style="width:150px;padding:4px;" aria-label="Original page numbers to delete or restore">
+                    <input type="text" id="bulkRangeInput" placeholder="e.g. 2-5, 9, 12-end, even" style="width:170px;padding:4px;" aria-label="Original page numbers to delete or restore">
                 </label>
                 <button class="btn-clear pm-btn" id="btnDeleteRange" type="button">Delete</button>
                 <button class="btn-clear pm-btn" id="btnRestoreRange" type="button">Restore</button>
-                <button class="btn-clear pm-btn" id="btnResetPages" type="button" style="margin-left:auto;">↺ Reset all changes</button>
+                <button class="btn-clear pm-btn" id="btnFindBlanks" type="button" title="Detect blank pages and mark them deleted">🧹 Find blank pages</button>
+                <button class="btn-clear pm-btn" id="btnPmUndo" type="button" title="Undo (⌘/Ctrl+Z)" style="margin-left:auto;">↶</button>
+                <button class="btn-clear pm-btn" id="btnPmRedo" type="button" title="Redo (⌘/Ctrl+Shift+Z)">↷</button>
+                <button class="btn-clear pm-btn" id="btnResetPages" type="button">↺ Reset all changes</button>
             </div>
             <div id="pageManagerSummary" style="font-size:0.75rem;color:var(--gray-500);margin-bottom:10px;"></div>
             <div class="page-grid" id="pageGrid"></div>
@@ -727,9 +869,9 @@
             const btnRestoreRange = document.getElementById('btnRestoreRange');
             const btnResetPages = document.getElementById('btnResetPages');
             const btnInsertBlankStart = document.getElementById('btnInsertBlankStart');
+            const btnAddBulkBlanks = document.getElementById('btnAddBulkBlanks');
             const btnInsertFileStart = document.getElementById('btnInsertFileStart');
             const insertFileInput = document.getElementById('insertFileInput');
-            const btnAddBulkBlanks = document.getElementById('btnAddBulkBlanks');
 
             // New: PDF viewer / add-text editor
             const btnEditPdf = document.getElementById('btnEditPdf');
@@ -843,6 +985,9 @@
                 'chkWatermark', 'watermarkType', 'watermarkText', 'watermarkFontSize', 'watermarkOpacity', 'watermarkColor', 'watermarkAngle', 'watermarkImageScale',
                 'chkPageNumbers', 'pageNumberPattern', 'pageNumberPosition', 'pageNumberStart', 'pageNumberSkip', 'pageNumberFontSize', 'pageNumberBackground',
                 'metaAuthor',
+                'chkPageLabels', 'chkHeaderFooter', 'hfTL', 'hfTC', 'hfTR', 'hfBL', 'hfBC', 'hfBR',
+                'batesPrefix', 'batesStart', 'batesDigits', 'batesSuffix', 'hfFontSize', 'hfColor', 'hfMargin', 'hfSkip',
+                'mergeMode', 'chkBookmarks', 'chkKeepBookmarks', 'chkToc', 'chkFlattenForms', 'pageSizeMode', 'compressLevel',
             ];
             function collectPresetSettings() {
                 const out = {};
@@ -861,6 +1006,8 @@
                 });
                 pageNumberOptions.classList.toggle('active', chkPageNumbers.checked);
                 watermarkOptions.classList.toggle('active', chkWatermark.checked);
+                const hfChk = document.getElementById('chkHeaderFooter');
+                document.getElementById('hfOptions').classList.toggle('active', hfChk.checked);
                 const isImage = watermarkType.value === 'image';
                 watermarkTextFields.style.display = isImage ? 'none' : '';
                 watermarkImageFields.style.display = isImage ? '' : 'none';
@@ -1060,6 +1207,10 @@
                 for (const raw of String(str).split(',')) {
                     const part = raw.trim().toLowerCase();
                     if (!part) continue;
+                    if (part === 'odd' || part === 'even') {
+                        for (let p = part === 'odd' ? 1 : 2; p <= max; p += 2) pages.add(p);
+                        continue;
+                    }
                     let m;
                     if ((m = part.match(/^(\d+|last|end)$/))) {
                         const p = (m[1] === 'last' || m[1] === 'end') ? max : +m[1];
@@ -1254,6 +1405,7 @@
                     renderFileList();
                     updateUI();
                 }
+                recordChange();
             }
 
             // Free a file's pdf.js document and cached thumbnails (they can be large).
@@ -1275,6 +1427,7 @@
                 const entry = files.find(f => f.id === id);
                 releaseEntry(entry);
                 files = files.filter(f => f.id !== id);
+                recordChange();
                 if (draggedItemId === id) draggedItemId = null;
                 renderFileList();
                 updateUI();
@@ -1285,6 +1438,7 @@
                 if (files.length > 1 && !confirm(`Remove all ${files.length} files from the list?`)) return;
                 files.forEach(releaseEntry);
                 files = [];
+                recordChange();
                 draggedItemId = null;
                 dragOverItemId = null;
                 renderFileList();
@@ -1299,6 +1453,7 @@
                 if (newIndex < 0 || newIndex >= files.length) return;
                 const [item] = files.splice(index, 1);
                 files.splice(newIndex, 0, item);
+                recordChange();
                 renderFileList();
                 hideResult();
             }
@@ -1306,6 +1461,7 @@
             function reverseFiles() {
                 if (files.length < 2) return;
                 files.reverse();
+                recordChange();
                 renderFileList();
                 hideResult();
             }
@@ -1318,6 +1474,7 @@
                 if (targetIndex === -1) return;
                 if (position === 'bottom') targetIndex++;
                 files.splice(targetIndex, 0, draggedItem);
+                recordChange();
                 renderFileList();
                 hideResult();
             }
@@ -1326,6 +1483,7 @@
                 const entry = files.find(f => f.id === id);
                 if (!entry) return;
                 entry.blankPagesAfter = Math.max(0, Math.min(20, parseInt(count) || 0));
+                recordChange();
                 renderFileList();
                 hideResult();
                 updateUI();                 // keep "Output will have N pages" in step
@@ -1401,15 +1559,13 @@
             btnResetPages.addEventListener('click', () => {
                 const entry = currentPageManagerEntry();
                 if (!entry) return;
-                if (!confirm('Undo all page changes for this file (deletions, rotations, reordering, inserted blank pages and pages inserted from other files)?')) return;
+                if (!confirm('Undo all page changes for this file (deletions, rotations, reordering and inserted blank pages and pages inserted from other files)?')) return;
                 entry.pageStates.deleted.clear();
                 entry.pageStates.rotations.clear();
                 entry.pageStates.order = Array.from({ length: entry.pageCount }, (_, idx) => idx + 1);
                 ensureInsertState(entry);
-                entry.pageStates.insertedSources.forEach(src => {
-                    if (src.pdfJsPromise) src.pdfJsPromise.then(d => { try { d.destroy(); } catch (e) {} }).catch(() => {});
-                });
-                entry.pageStates.inserted.clear();
+                // Sources are kept in memory (not destroyed) so ↶ Undo can bring them back.
+                entry.pageStates.inserted = new Map();
                 entry.pageStates.insertedSources = [];
                 pageStateChanged(entry);
             });
@@ -1448,25 +1604,7 @@
                 if (!pending || picked.length === 0) return;
                 const entry = files.find(f => f.id === pending.entryId);
                 if (!entry) return;
-                let position = pending.position;
-                if (position === null) {
-                    // Started from the file list: ask where, in this file's own page numbers.
-                    const n = entry.pageCount;
-                    const answer = window.prompt(
-                        `Insert the new page(s) into "${entry.name}" after which page?\n` +
-                        `Type 0 to put them before page 1, or ${n} to put them at the end (1–${n}).`, String(n));
-                    if (answer === null) return;
-                    const k = parseInt(answer, 10);
-                    if (isNaN(k) || k < 0 || k > n) { alert(`Please enter a page number from 0 to ${n}.`); return; }
-                    ensureInsertState(entry);
-                    const order = entry.pageStates.order;
-                    if (k === 0) position = 0;
-                    else if (k === n) position = order.length;
-                    else { const idx = order.indexOf(k); position = idx === -1 ? order.length : idx + 1; }
-                }
-                await insertPagesFromFiles(entry, picked, position);
-                // Show the result so the new pages can be checked, moved or removed.
-                if (pending.position === null && countInsertedIds(entry) > 0) openPageManager(entry.id);
+                await insertPagesFromFiles(entry, picked, pending.position);
             });
 
             async function insertPagesFromFiles(entry, picked, position) {
@@ -1518,8 +1656,9 @@
                     btnInsertFileStart.disabled = false;
                     pageManagerSummary.textContent = busyNote;
                 }
-                if (currentPageManagerFileId === entry.id) pageStateChanged(entry);
-                else { hideResult(); renderFileList(); updateUI(); }
+                if (!added) { /* nothing changed */ }
+                else if (currentPageManagerFileId === entry.id) pageStateChanged(entry);
+                else { recordChange(); hideResult(); renderFileList(); updateUI(); }
                 if (problems.length) {
                     alert((added ? `Inserted ${added} page(s). ` : 'No pages were inserted. ') +
                           'Not added:\n• ' + problems.join('\n• '));
@@ -1529,6 +1668,7 @@
                 const entry = currentPageManagerEntry();
                 if (entry) startInsertFromFile(entry, 0);
             });
+
 
             // ============ VIEW MERGED PDF / ADD TEXT ============
             // New: lets the user open the just-merged PDF, page through it, and click
@@ -2042,17 +2182,7 @@
                     thumbActive++;
                     (async () => {
                         try {
-                            let cached = job.entry.thumbs.get(job.pageNum);
-                            if (!cached) {
-                                const pdf = await getEntryPdfJs(job.entry);
-                                const page = await pdf.getPage(job.pageNum);
-                                const viewport = page.getViewport({ scale: 0.3 });
-                                cached = document.createElement('canvas');
-                                cached.width = Math.ceil(viewport.width);
-                                cached.height = Math.ceil(viewport.height);
-                                await page.render({ canvasContext: cached.getContext('2d'), viewport }).promise;
-                                job.entry.thumbs.set(job.pageNum, cached);
-                            }
+                            const cached = await getPageThumb(job.entry, job.pageNum);
                             if (job.wrap.isConnected) drawThumbInto(job.wrap, cached, job.rotation);
                         } catch (err) {
                             console.error('Thumbnail failed:', err);
@@ -2069,6 +2199,7 @@
             // badges and the "Output will have N pages" estimate (the last two used to stay
             // stale until the manager was closed and something else triggered a redraw).
             function pageStateChanged(entry) {
+                recordChange();
                 hideResult();
                 renderFileList();
                 updateUI();
@@ -2158,6 +2289,22 @@
                     btn.addEventListener('click', () => insertBlankAt(position));
                     return btn;
                 };
+                const moveButtons = (id, pos) => {
+                    const left = document.createElement('button');
+                    left.textContent = '◀';
+                    left.title = 'Move earlier';
+                    left.setAttribute('aria-label', `Move position ${pos + 1} earlier`);
+                    left.disabled = pos === 0;
+                    left.addEventListener('click', () => movePageInOrder(entry, id, -1));
+                    const right = document.createElement('button');
+                    right.textContent = '▶';
+                    right.title = 'Move later';
+                    right.setAttribute('aria-label', `Move position ${pos + 1} later`);
+                    right.disabled = pos === last;
+                    right.addEventListener('click', () => movePageInOrder(entry, id, 1));
+                    return [left, right];
+                };
+
                 const makeFileButton = (position) => {
                     const btn = document.createElement('button');
                     btn.type = 'button';
@@ -2202,22 +2349,6 @@
                     });
                     return [rotL, rotR];
                 };
-                const moveButtons = (id, pos) => {
-                    const left = document.createElement('button');
-                    left.textContent = '◀';
-                    left.title = 'Move earlier';
-                    left.setAttribute('aria-label', `Move position ${pos + 1} earlier`);
-                    left.disabled = pos === 0;
-                    left.addEventListener('click', () => movePageInOrder(entry, id, -1));
-                    const right = document.createElement('button');
-                    right.textContent = '▶';
-                    right.title = 'Move later';
-                    right.setAttribute('aria-label', `Move position ${pos + 1} later`);
-                    right.disabled = pos === last;
-                    right.addEventListener('click', () => movePageInOrder(entry, id, 1));
-                    return [left, right];
-                };
-
                 btnInsertBlankStart.onclick = () => insertBlankAt(0);
                 order.forEach((id, pos) => {
                     const card = document.createElement('div');
@@ -2356,13 +2487,12 @@
                                 ${fileEntry.unlocked ? '<span class="badge" title="This file was password-protected and has been unlocked for merging">🔓 unlocked</span>' : ''}
                                 ${fileEntry.isImage ? '<span class="badge">image → A4 page</span>' : ''}
                                 ${fileEntry.blankPagesAfter > 0 ? `<span class="badge blank">+${fileEntry.blankPagesAfter} blank after</span>` : ''}
-                                ${countInsertedIds(fileEntry) > 0 ? `<span class="badge inserted">+${countInsertedIds(fileEntry)} inserted</span>` : ''}
                                 ${fileEntry.pageStates.deleted.size > 0 ? `<span class="badge">deleted: ${fileEntry.pageStates.deleted.size}</span>` : ''}
+                                ${countInsertedIds(fileEntry) > 0 ? `<span class="badge inserted">+${countInsertedIds(fileEntry)} inserted</span>` : ''}
                                 ${fileEntry.pageStates.rotations.size > 0 ? `<span class="badge">rotations: ${fileEntry.pageStates.rotations.size}</span>` : ''}
                             </span>
                         </span>
                         <span class="file-actions">
-                            <button class="btn-insert-pages insert-pages" type="button" title="Insert pages from another PDF or a picture into this file" aria-label="Insert pages into ${escapeHtml(fileEntry.name)}" ${fileEntry.isLoading || fileEntry.error ? 'disabled' : ''}>➕ Insert pages</button>
                             <button class="btn-icon manage-pages" title="Manage pages" aria-label="Manage pages in ${escapeHtml(fileEntry.name)}" ${fileEntry.isLoading || fileEntry.error ? 'disabled' : ''}>📝</button>
                             <label class="blank-count-label" title="Blank pages to add after this file" style="display:flex;align-items:center;gap:3px;font-size:0.75rem;color:var(--gray-500);">🗒️
                                 <input type="number" class="blank-count-input" min="0" max="20" value="${fileEntry.blankPagesAfter || 0}" style="width:40px;padding:2px 4px;font-size:0.78rem;" aria-label="Number of blank pages to add after ${escapeHtml(fileEntry.name)}">
@@ -2374,7 +2504,6 @@
                     `;
 
                     li.querySelector('.manage-pages').addEventListener('click', (e) => { e.stopPropagation(); openPageManager(fileEntry.id); });
-                    li.querySelector('.insert-pages').addEventListener('click', (e) => { e.stopPropagation(); startInsertFromFile(fileEntry, null); });
                     li.querySelector('.blank-count-input').addEventListener('click', (e) => e.stopPropagation());
                     li.querySelector('.blank-count-input').addEventListener('change', (e) => { e.stopPropagation(); setBlankPagesAfter(fileEntry.id, e.target.value); });
                     li.querySelector('.move-up').addEventListener('click', (e) => { e.stopPropagation(); moveFile(fileEntry.id, -1); });
@@ -2438,6 +2567,8 @@
                     watermarkSection.classList.add('visible');
                     passwordSection.classList.add('visible');
                     metaSection.classList.add('visible');
+                    combineSection.classList.add('visible');
+                    hfSection.classList.add('visible');
                 } else {
                     fileListSection.classList.remove('visible');
                     mergeSection.classList.remove('visible');
@@ -2445,6 +2576,8 @@
                     watermarkSection.classList.remove('visible');
                     passwordSection.classList.remove('visible');
                     metaSection.classList.remove('visible');
+                    combineSection.classList.remove('visible');
+                    hfSection.classList.remove('visible');
                 }
                 const allLoaded = files.every(f => !f.isLoading && f.pdfDoc !== null && !f.error);
                 const hasErrors = files.some(f => f.error);
@@ -2484,6 +2617,9 @@
                 if (previewPdfDoc) { try { previewPdfDoc.destroy(); } catch (e) {} previewPdfDoc = null; }
                 previewNote.textContent = '';
                 extractPagesInput.value = '';
+                resultStats.textContent = '';
+                splitStatus.textContent = '';
+                lastMerge = null;
                 // New: any in-progress text edits refer to the now-invalidated merged PDF —
                 // discard them and close the editor if it's open, rather than leaving stale
                 // annotations that would apply to the wrong document on next open.
@@ -2514,6 +2650,782 @@
                 }
             });
             chkPassword.addEventListener('change', () => passwordOptions.classList.toggle('active', chkPassword.checked));
+
+            // ================================================================
+            // ============ v4: COMBINE-ENGINE HELPERS =========================
+            // ================================================================
+            const combineSection = document.getElementById('combineSection');
+            const hfSection = document.getElementById('hfSection');
+            const resultStats = document.getElementById('resultStats');
+            const splitStatus = document.getElementById('splitStatus');
+            const fileToolStatus = document.getElementById('fileToolStatus');
+            let lastMerge = null;   // { pageMeta, names } from the most recent merge (for Split)
+
+            const displayName = (name) => String(name || '').replace(/\.(pdf|jpe?g|png|gif|webp|bmp|heic|heif|tiff?)$/i, '');
+            const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+
+            document.getElementById('chkHeaderFooter').addEventListener('change', (e) =>
+                document.getElementById('hfOptions').classList.toggle('active', e.target.checked));
+
+            // Token buttons insert into whichever header/footer box was last focused.
+            let lastHfInput = document.getElementById('hfBR');
+            document.querySelectorAll('.hf-grid input').forEach(inp => inp.addEventListener('focus', () => { lastHfInput = inp; }));
+            document.querySelectorAll('.hf-tokens button').forEach(btn => btn.addEventListener('click', () => {
+                const inp = lastHfInput, tok = btn.dataset.token;
+                const a = inp.selectionStart ?? inp.value.length, b = inp.selectionEnd ?? inp.value.length;
+                inp.value = inp.value.slice(0, a) + tok + inp.value.slice(b);
+                inp.focus();
+                inp.setSelectionRange(a + tok.length, a + tok.length);
+                inp.dispatchEvent(new Event('change'));
+            }));
+
+            // ---------- Form fields: flatten on a private copy so answers survive the merge ----------
+            async function getMergeSource(entry) {
+                if (!document.getElementById('chkFlattenForms').checked || entry.isImage) return entry.pdfDoc;
+                try {
+                    const acro = entry.pdfDoc.catalog.lookup(PDFLib.PDFName.of('AcroForm'));
+                    if (!acro) return entry.pdfDoc;
+                    const copy = await PDFLib.PDFDocument.load(entry.buffer.slice(0), { ignoreEncryption: true });
+                    const form = copy.getForm();
+                    if (!form.getFields().length) return entry.pdfDoc;
+                    form.flatten();
+                    return copy;
+                } catch (err) {
+                    console.warn('Could not flatten form fields in', entry.name, err);
+                    return entry.pdfDoc;
+                }
+            }
+
+            // ---------- Page size normalisation ----------
+            const PAGE_SIZES = { a4: [595.28, 841.89], letter: [612, 792], legal: [612, 1008], a3: [841.89, 1190.55], a5: [419.53, 595.28] };
+            function targetPaper(doc, mode) {
+                if (mode === 'first') {
+                    const info = getVisualInfo(doc.getPage(0));
+                    return [Math.min(info.vw, info.vh), Math.max(info.vw, info.vh)];
+                }
+                const p = PAGE_SIZES[mode];
+                return p ? [Math.min(...p), Math.max(...p)] : null;
+            }
+            async function normalizePageSizes(doc, mode) {
+                if (!doc.getPageCount()) return;
+                const paper = targetPaper(doc, mode);
+                if (!paper) return;
+                const [short, long] = paper;
+                const count = doc.getPageCount();
+                for (let i = 0; i < count; i++) {
+                    const page = doc.getPage(i);
+                    const info = getVisualInfo(page);
+                    const landscape = info.vw > info.vh;
+                    const tw = landscape ? long : short, th = landscape ? short : long;
+                    if (Math.abs(info.vw - tw) < 1 && Math.abs(info.vh - th) < 1) continue;
+                    const embedded = await doc.embedPage(page, {
+                        left: info.x0, bottom: info.y0, right: info.x0 + info.W, top: info.y0 + info.H,
+                    });
+                    const s = Math.min(tw / info.vw, th / info.vh);
+                    const w = info.W * s, h = info.H * s;
+                    // The page's /Rotate turns its content clockwise; draw the content turned the
+                    // same way so it looks identical, then centre its visual bounding box.
+                    const a = -info.r;
+                    const corners = [[0, 0], [w, 0], [0, h], [w, h]].map(([u, v]) => rotateVec(u, v, a));
+                    const minX = Math.min(...corners.map(c => c.x)), minY = Math.min(...corners.map(c => c.y));
+                    const x = (tw - info.vw * s) / 2 - minX, y = (th - info.vh * s) / 2 - minY;
+                    const np = doc.insertPage(i, [tw, th]);
+                    np.drawPage(embedded, { x, y, xScale: s, yScale: s, rotate: PDFLib.degrees(a) });
+                    doc.removePage(i + 1);
+                    if (i % 10 === 9) await yieldToUI();
+                }
+            }
+
+            // ---------- Image re-compression (Acrobat-style "Reduce File Size") ----------
+            // Finds photos/scans (JPEG or Flate-compressed 8-bit RGB/gray images), downsamples
+            // anything larger than the target and re-encodes as JPEG. Only keeps the result if
+            // it's at least 10% smaller. Text, vector art, masks and line art are left alone.
+            const COMPRESS_LEVELS = {
+                light:    { maxPx: 2600, q: 0.85 },
+                balanced: { maxPx: 1750, q: 0.72 },
+                strong:   { maxPx: 1150, q: 0.58 },
+            };
+            function unpredictPng(data, w, h, comps) {
+                const rowLen = w * comps;
+                if (data.length < (rowLen + 1) * h) throw new Error('Short image data');
+                const out = new Uint8Array(rowLen * h);
+                let prev = new Uint8Array(rowLen), p = 0;
+                for (let y = 0; y < h; y++) {
+                    const ft = data[p++];
+                    const row = out.subarray(y * rowLen, (y + 1) * rowLen);
+                    for (let x = 0; x < rowLen; x++) {
+                        const raw = data[p++];
+                        const a = x >= comps ? row[x - comps] : 0, b = prev[x], c = x >= comps ? prev[x - comps] : 0;
+                        let v;
+                        switch (ft) {
+                            case 1: v = raw + a; break;
+                            case 2: v = raw + b; break;
+                            case 3: v = raw + ((a + b) >> 1); break;
+                            case 4: { const pa = Math.abs(b - c), pb = Math.abs(a - c), pc = Math.abs(a + b - 2 * c);
+                                      v = raw + (pa <= pb && pa <= pc ? a : pb <= pc ? b : c); break; }
+                            default: v = raw;
+                        }
+                        row[x] = v & 255;
+                    }
+                    prev = row;
+                }
+                return out;
+            }
+            async function inflate(bytes) {
+                const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate'));
+                return new Uint8Array(await new Response(stream).arrayBuffer());
+            }
+            async function compressImages(doc, level, onProgress) {
+                const cfg = COMPRESS_LEVELS[level];
+                const stats = { count: 0, saved: 0 };
+                if (!cfg) return stats;
+                const { PDFName, PDFRawStream, PDFNumber, PDFArray, PDFDict, PDFRef, PDFBool } = PDFLib;
+                const N = (n) => PDFName.of(n);
+                const ctx = doc.context;
+                const objects = ctx.enumerateIndirectObjects();
+                // Images used as soft masks / masks must stay exact — skip them.
+                const maskRefs = new Set();
+                for (const [, obj] of objects) {
+                    const d = obj instanceof PDFRawStream ? obj.dict : (obj instanceof PDFDict ? obj : null);
+                    if (!d) continue;
+                    for (const key of ['SMask', 'Mask']) {
+                        const v = d.get(N(key));
+                        if (v instanceof PDFRef) maskRefs.add(v.toString());
+                    }
+                }
+                const components = (cs) => {
+                    if (cs === N('DeviceRGB') || cs === N('CalRGB')) return 3;
+                    if (cs === N('DeviceGray') || cs === N('CalGray')) return 1;
+                    if (cs instanceof PDFArray) {
+                        const kind = cs.lookup(0);
+                        if (kind === N('CalRGB')) return 3;
+                        if (kind === N('CalGray')) return 1;
+                        if (kind === N('ICCBased')) {
+                            const st = cs.lookup(1);
+                            const n = st && st.dict ? st.dict.lookup(N('N')) : null;
+                            return n && n.asNumber ? n.asNumber() : null;
+                        }
+                    }
+                    return null;
+                };
+                const candidates = [];
+                for (const [ref, obj] of objects) {
+                    if (!(obj instanceof PDFRawStream)) continue;
+                    const d = obj.dict;
+                    if (d.get(N('Subtype')) !== N('Image')) continue;
+                    if (maskRefs.has(ref.toString())) continue;
+                    const im = d.lookup(N('ImageMask'));
+                    if (im && im.asBoolean && im.asBoolean()) continue;
+                    if (d.has(N('Decode'))) continue;
+                    let f = d.lookup(N('Filter'));
+                    if (f instanceof PDFArray) { if (f.size() !== 1) continue; f = f.lookup(0); }
+                    if (f !== N('DCTDecode') && f !== N('FlateDecode')) continue;
+                    const bpc = d.lookup(N('BitsPerComponent'));
+                    if (!bpc || bpc.asNumber() !== 8) continue;
+                    const comps = components(d.lookup(N('ColorSpace')));
+                    if (comps !== 1 && comps !== 3) continue;
+                    const size = obj.contents.length;
+                    if (size < (f === N('DCTDecode') ? 40000 : 150000)) continue;
+                    candidates.push({ ref, obj, f, comps, size });
+                }
+                const canvas = document.createElement('canvas');
+                for (let k = 0; k < candidates.length; k++) {
+                    const { ref, obj, f, comps, size } = candidates[k];
+                    onProgress && onProgress(k + 1, candidates.length);
+                    try {
+                        const d = obj.dict;
+                        const w = d.lookup(N('Width')).asNumber(), h = d.lookup(N('Height')).asNumber();
+                        const scale = Math.min(1, cfg.maxPx / Math.max(w, h));
+                        const tw = Math.max(1, Math.round(w * scale)), th = Math.max(1, Math.round(h * scale));
+                        let source;
+                        if (f === N('DCTDecode')) {
+                            source = await createImageBitmap(new Blob([obj.contents], { type: 'image/jpeg' }));
+                        } else {
+                            if (typeof DecompressionStream === 'undefined') continue;
+                            let pixels = await inflate(obj.contents);
+                            const parms = d.lookup(N('DecodeParms'));
+                            const pred = parms instanceof PDFDict && parms.lookup(N('Predictor')) ? parms.lookup(N('Predictor')).asNumber() : 1;
+                            if (pred >= 10) {
+                                const colors = parms.lookup(N('Colors')) ? parms.lookup(N('Colors')).asNumber() : 1;
+                                if (colors !== comps) continue;
+                                pixels = unpredictPng(pixels, w, h, comps);
+                            } else if (pred !== 1) continue;
+                            if (pixels.length < w * h * comps) continue;
+                            const rgba = new Uint8ClampedArray(w * h * 4);
+                            for (let i = 0, j = 0; i < w * h; i++, j += comps) {
+                                const r = pixels[j], g = comps === 3 ? pixels[j + 1] : r, b = comps === 3 ? pixels[j + 2] : r;
+                                rgba[i * 4] = r; rgba[i * 4 + 1] = g; rgba[i * 4 + 2] = b; rgba[i * 4 + 3] = 255;
+                            }
+                            source = await createImageBitmap(new ImageData(rgba, w, h));
+                        }
+                        canvas.width = tw; canvas.height = th;
+                        const c2d = canvas.getContext('2d');
+                        c2d.fillStyle = '#fff'; c2d.fillRect(0, 0, tw, th);
+                        c2d.imageSmoothingQuality = 'high';
+                        c2d.drawImage(source, 0, 0, tw, th);
+                        if (source.close) source.close();
+                        const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', cfg.q));
+                        if (!blob) continue;
+                        const bytes = new Uint8Array(await blob.arrayBuffer());
+                        if (bytes.length > size * 0.9) continue;
+                        const nd = d.clone(ctx);
+                        nd.set(N('Width'), PDFNumber.of(tw));
+                        nd.set(N('Height'), PDFNumber.of(th));
+                        nd.set(N('Filter'), N('DCTDecode'));
+                        nd.set(N('ColorSpace'), N('DeviceRGB'));
+                        nd.set(N('BitsPerComponent'), PDFNumber.of(8));
+                        nd.delete(N('DecodeParms'));
+                        ctx.assign(ref, PDFRawStream.of(nd, bytes));
+                        stats.count++;
+                        stats.saved += size - bytes.length;
+                    } catch (err) {
+                        console.warn('Skipped an image during optimisation:', err);
+                    }
+                    if (k % 2 === 1) await yieldToUI();
+                }
+                canvas.width = canvas.height = 0;
+                return stats;
+            }
+
+            // ---------- Printed page numbers (what the reader sees on the page) ----------
+            function toRoman(n) {
+                const map = [[1000, 'm'], [900, 'cm'], [500, 'd'], [400, 'cd'], [100, 'c'], [90, 'xc'], [50, 'l'], [40, 'xl'], [10, 'x'], [9, 'ix'], [5, 'v'], [4, 'iv'], [1, 'i']];
+                let out = '';
+                for (const [v, r] of map) while (n >= v) { out += r; n -= v; }
+                return out;
+            }
+            function printedPageNumber(idx) {
+                if (!chkPageNumbers.checked) return String(idx + 1);
+                const skip = Math.max(0, parseInt(document.getElementById('pageNumberSkip').value) || 0);
+                const startIn = parseInt(document.getElementById('pageNumberStart').value);
+                const start = isNaN(startIn) ? 1 : startIn;
+                if (idx < skip) return document.getElementById('chkPageLabels').checked ? toRoman(idx + 1) : String(idx + 1);
+                return String(start + idx - skip);
+            }
+
+            // ---------- Table of contents ----------
+            async function insertTocPages(doc, pageMeta, tr, sizeMode) {
+                // One entry per source file, at the first page it contributes.
+                const entries = [];
+                const seen = new Set();
+                pageMeta.forEach((m, idx) => {
+                    if (m.fi == null || seen.has(m.fi)) return;
+                    seen.add(m.fi);
+                    entries.push({ title: displayName(files[m.fi].name), idx });
+                });
+                if (!entries.length) return 0;
+                let [pw, ph] = targetPaper(doc, sizeMode === 'keep' ? 'first' : sizeMode) || PAGE_SIZES.a4;
+                if (pw > ph) [pw, ph] = [ph, pw];
+                const M = 56, TITLE = 22, SIZE = 11, LINE = 21;
+                const firstTop = ph - M - TITLE - 28;
+                const perPage = Math.max(1, Math.floor((firstTop - M) / LINE));
+                const tocCount = Math.ceil(entries.length / perPage);
+                const pages = [];
+                for (let k = 0; k < tocCount; k++) pages.push(doc.insertPage(k, [pw, ph]));
+                const allPages = doc.getPages();
+                const grey = PDFLib.rgb(0.6, 0.6, 0.65);
+                for (let k = 0; k < tocCount; k++) {
+                    const page = pages[k];
+                    await tr.draw(page, k === 0 ? 'Contents' : 'Contents (continued)', { left: M, baseline: ph - M - TITLE, size: TITLE });
+                    page.drawLine({ start: { x: M, y: ph - M - TITLE - 12 }, end: { x: pw - M, y: ph - M - TITLE - 12 }, thickness: 1, color: PDFLib.rgb(0.31, 0.27, 0.9) });
+                    const slice = entries.slice(k * perPage, (k + 1) * perPage);
+                    for (let j = 0; j < slice.length; j++) {
+                        const e = slice[j];
+                        const targetIdx = e.idx + tocCount;
+                        const label = printedPageNumber(targetIdx);
+                        const baseline = firstTop - j * LINE;
+                        const { w: numW } = await tr.measure(label, SIZE);
+                        const maxTitleW = pw - 2 * M - numW - 30;
+                        let title = e.title;
+                        while (title.length > 4 && (await tr.measure(title, SIZE)).w > maxTitleW) title = title.slice(0, -2);
+                        if (title !== e.title) title = title.replace(/\s+$/, '') + '…';
+                        const { w: titleW } = await tr.measure(title, SIZE);
+                        await tr.draw(page, title, { left: M, baseline, size: SIZE });
+                        await tr.draw(page, label, { left: pw - M - numW, baseline, size: SIZE });
+                        const dotsFrom = M + titleW + 6, dotsTo = pw - M - numW - 6;
+                        if (dotsTo > dotsFrom) page.drawLine({ start: { x: dotsFrom, y: baseline + 1 }, end: { x: dotsTo, y: baseline + 1 }, thickness: 0.8, color: grey, dashArray: [0.8, 3.2] });
+                        // Whole row is a link to the file's first page.
+                        const annot = doc.context.obj({
+                            Type: 'Annot', Subtype: 'Link', Border: [0, 0, 0],
+                            Rect: [M - 2, baseline - 5, pw - M + 2, baseline + SIZE + 3],
+                            Dest: [allPages[targetIdx].ref, 'XYZ', null, null, null],
+                        });
+                        page.node.addAnnot(doc.context.register(annot));
+                    }
+                }
+                return tocCount;
+            }
+
+            // ---------- Headers, footers & Bates numbers ----------
+            async function applyHeadersFooters(doc, pageMeta, tr, metaTitle) {
+                const val = (id) => document.getElementById(id).value;
+                const slots = { tl: val('hfTL'), tc: val('hfTC'), tr: val('hfTR'), bl: val('hfBL'), bc: val('hfBC'), br: val('hfBR') };
+                if (!Object.values(slots).some(v => v.trim())) return;
+                const size = Math.max(5, parseFloat(val('hfFontSize')) || 9);
+                const color = val('hfColor');
+                const margin = Math.max(4, parseFloat(val('hfMargin')) || 24);
+                const count = doc.getPageCount();
+                const skip = Math.max(0, Math.min(count, parseInt(val('hfSkip')) || 0));
+                const batesStart = Math.max(0, parseInt(val('batesStart')) || 0);
+                const digits = Math.max(1, Math.min(12, parseInt(val('batesDigits')) || 6));
+                const date = new Date().toLocaleDateString();
+                for (let i = skip; i < count; i++) {
+                    const page = doc.getPage(i);
+                    const info = getVisualInfo(page);
+                    const m = pageMeta[i] || {};
+                    const vars = {
+                        page: i - skip + 1, total: count - skip,
+                        bates: val('batesPrefix') + String(batesStart + i - skip).padStart(digits, '0') + val('batesSuffix'),
+                        file: m.toc ? 'Contents' : (m.fi != null ? displayName(files[m.fi].name) : ''),
+                        date, title: metaTitle || '',
+                    };
+                    for (const [key, tpl] of Object.entries(slots)) {
+                        if (!tpl.trim()) continue;
+                        const text = tpl.replace(/\{(page|total|bates|file|date|title)\}/g, (_, k) => vars[k]);
+                        const { w } = await tr.measure(text, size);
+                        const baseline = key[0] === 't' ? info.vh - margin - size * 0.8 : margin;
+                        const left = key[1] === 'l' ? margin : key[1] === 'r' ? info.vw - margin - w : (info.vw - w) / 2;
+                        await tr.draw(page, text, { left, baseline, size, color });
+                    }
+                    if (i % 16 === 15) await yieldToUI();
+                }
+            }
+
+            // ---------- Page labels ----------
+            function setPageLabels(doc, skip, start) {
+                if (start < 1) return;   // the PDF spec requires label numbering to start at 1+
+                const nums = [];
+                if (skip > 0) nums.push(0, { S: 'r' });
+                if (skip < doc.getPageCount()) nums.push(skip, { S: 'D', St: start });
+                if (!nums.length) return;
+                doc.catalog.set(PDFLib.PDFName.of('PageLabels'), doc.context.obj({ Nums: nums }));
+            }
+
+            // ---------- Bookmarks ----------
+            async function readSourceOutline(entry, fi, srcIndex) {
+                try {
+                    const pdf = await getEntryPdfJs(entry);
+                    const outline = await pdf.getOutline();
+                    if (!outline || !outline.length) return [];
+                    let budget = 3000;
+                    const conv = async (items, depth) => {
+                        const out = [];
+                        for (const it of items) {
+                            if (budget-- <= 0) break;
+                            let pageIndex = null;
+                            try {
+                                let dest = it.dest;
+                                if (typeof dest === 'string') dest = await pdf.getDestination(dest);
+                                if (Array.isArray(dest) && dest[0] != null) {
+                                    const p = typeof dest[0] === 'object' ? await pdf.getPageIndex(dest[0]) : dest[0];
+                                    const idx = srcIndex.get(fi + ':' + (p + 1));
+                                    if (idx != null) pageIndex = idx;
+                                }
+                            } catch (e) { /* unresolved destination — keep children only */ }
+                            const children = depth < 10 && it.items && it.items.length ? await conv(it.items, depth + 1) : [];
+                            if (pageIndex != null) out.push({ title: (it.title || 'Untitled').trim(), pageIndex, children });
+                            else out.push(...children);
+                        }
+                        return out;
+                    };
+                    return await conv(outline, 0);
+                } catch (err) {
+                    console.warn('Could not read bookmarks from', entry.name, err);
+                    return [];
+                }
+            }
+            async function buildOutlineTree(pageMeta, tocCount) {
+                const tree = [];
+                if (tocCount) tree.push({ title: 'Contents', pageIndex: 0, children: [] });
+                const first = new Map(), srcIndex = new Map();
+                pageMeta.forEach((m, idx) => {
+                    if (m.fi == null) return;
+                    if (!first.has(m.fi)) first.set(m.fi, idx);
+                    if (m.src) srcIndex.set(m.fi + ':' + m.src, idx);
+                });
+                const perFile = document.getElementById('chkBookmarks').checked;
+                const keep = document.getElementById('chkKeepBookmarks').checked;
+                for (let fi = 0; fi < files.length; fi++) {
+                    if (!first.has(fi)) continue;
+                    const children = keep && !files[fi].isImage ? await readSourceOutline(files[fi], fi, srcIndex) : [];
+                    if (perFile) tree.push({ title: displayName(files[fi].name), pageIndex: first.get(fi), children });
+                    else tree.push(...children);
+                }
+                return tree;
+            }
+            function writeOutline(doc, tree) {
+                if (!tree.length) return;
+                const ctx = doc.context;
+                const pages = doc.getPages();
+                const rootRef = ctx.nextRef();
+                const build = (items, parentRef) => {
+                    const refs = items.map(() => ctx.nextRef());
+                    items.forEach((it, k) => {
+                        const dict = {
+                            Title: PDFLib.PDFHexString.fromText(it.title),
+                            Parent: parentRef,
+                            Dest: [pages[it.pageIndex].ref, 'XYZ', null, null, null],
+                        };
+                        if (k > 0) dict.Prev = refs[k - 1];
+                        if (k < items.length - 1) dict.Next = refs[k + 1];
+                        if (it.children.length) {
+                            const kids = build(it.children, refs[k]);
+                            dict.First = kids[0];
+                            dict.Last = kids[kids.length - 1];
+                            dict.Count = -it.children.length;   // collapsed, like Acrobat
+                        }
+                        ctx.assign(refs[k], ctx.obj(dict));
+                    });
+                    return refs;
+                };
+                const top = build(tree, rootRef);
+                ctx.assign(rootRef, ctx.obj({ Type: 'Outlines', First: top[0], Last: top[top.length - 1], Count: top.length }));
+                doc.catalog.set(PDFLib.PDFName.of('Outlines'), rootRef);
+                doc.catalog.set(PDFLib.PDFName.of('PageMode'), PDFLib.PDFName.of('UseOutlines'));
+            }
+
+            // ---------- ZIP (store-only — PDFs are already compressed) ----------
+            const CRC_TABLE = (() => {
+                const t = new Uint32Array(256);
+                for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; }
+                return t;
+            })();
+            function crc32(bytes) {
+                let c = 0xFFFFFFFF;
+                for (let i = 0; i < bytes.length; i++) c = CRC_TABLE[(c ^ bytes[i]) & 255] ^ (c >>> 8);
+                return (c ^ 0xFFFFFFFF) >>> 0;
+            }
+            function makeZip(entries) {
+                const enc = new TextEncoder();
+                const now = new Date();
+                const dosTime = (now.getHours() << 11) | (now.getMinutes() << 5) | (now.getSeconds() >> 1);
+                const dosDate = ((now.getFullYear() - 1980) << 9) | ((now.getMonth() + 1) << 5) | now.getDate();
+                const chunks = [], central = [];
+                let offset = 0;
+                for (const e of entries) {
+                    const name = enc.encode(e.name), crc = crc32(e.data), size = e.data.length;
+                    const lh = new DataView(new ArrayBuffer(30));
+                    lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true);
+                    lh.setUint16(8, 0, true); lh.setUint16(10, dosTime, true); lh.setUint16(12, dosDate, true);
+                    lh.setUint32(14, crc, true); lh.setUint32(18, size, true); lh.setUint32(22, size, true);
+                    lh.setUint16(26, name.length, true); lh.setUint16(28, 0, true);
+                    chunks.push(new Uint8Array(lh.buffer), name, e.data);
+                    const ch = new DataView(new ArrayBuffer(46));
+                    ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true);
+                    ch.setUint16(8, 0x0800, true); ch.setUint16(10, 0, true); ch.setUint16(12, dosTime, true);
+                    ch.setUint16(14, dosDate, true); ch.setUint32(16, crc, true); ch.setUint32(20, size, true);
+                    ch.setUint32(24, size, true); ch.setUint16(28, name.length, true);
+                    ch.setUint32(42, offset, true);
+                    central.push(new Uint8Array(ch.buffer), name);
+                    offset += 30 + name.length + size;
+                }
+                const cdSize = central.reduce((t, c) => t + c.length, 0);
+                const end = new DataView(new ArrayBuffer(22));
+                end.setUint32(0, 0x06054b50, true);
+                end.setUint16(8, entries.length, true); end.setUint16(10, entries.length, true);
+                end.setUint32(12, cdSize, true); end.setUint32(16, offset, true);
+                return new Blob([...chunks, ...central, new Uint8Array(end.buffer)], { type: 'application/zip' });
+            }
+
+            // ---------- Split ----------
+            const splitModeSel = document.getElementById('splitMode');
+            const splitValueInput = document.getElementById('splitValue');
+            const btnSplit = document.getElementById('btnSplit');
+            function updateSplitPlaceholder() {
+                const m = splitModeSel.value;
+                splitValueInput.style.display = m === 'file' ? 'none' : '';
+                splitValueInput.placeholder = { every: 'pages per file, e.g. 10', ranges: '1-3; 4-10; 11-end', size: 'MB per file, e.g. 9.5' }[m] || '';
+            }
+            splitModeSel.addEventListener('change', updateSplitPlaceholder);
+            updateSplitPlaceholder();
+            const safeName = (n) => n.replace(/[\\/:*?"<>|]+/g, '_').trim() || 'part';
+            async function splitResult() {
+                if (!workingPdfBytes || !lastMerge) return;
+                const mode = splitModeSel.value, value = splitValueInput.value.trim();
+                const base = safeName(displayName((mergedFilenameInput.value || 'merged.pdf').trim()));
+                btnSplit.disabled = true;
+                try {
+                    const src = await PDFLib.PDFDocument.load(workingPdfBytes);
+                    const n = src.getPageCount();
+                    const pad = (k, total) => String(k).padStart(String(total).length, '0');
+                    let groups = [];
+                    if (mode === 'file') {
+                        const order = [], byKey = new Map();
+                        lastMerge.pageMeta.forEach((m, idx) => {
+                            const key = m.toc ? 'toc' : m.fi;
+                            if (!byKey.has(key)) { byKey.set(key, []); order.push(key); }
+                            byKey.get(key).push(idx);
+                        });
+                        groups = order.map(key => ({ label: key === 'toc' ? 'Contents' : displayName(lastMerge.names[key]), pages: byKey.get(key) }));
+                        groups = groups.map((g, k) => ({ name: `${pad(k + 1, groups.length)} ${safeName(g.label)}.pdf`, pages: g.pages }));
+                    } else if (mode === 'every') {
+                        const k = parseInt(value);
+                        if (!(k >= 1)) { alert('Enter how many pages each file should have, e.g. 10.'); return; }
+                        const total = Math.ceil(n / k);
+                        for (let s = 0, j = 1; s < n; s += k, j++) groups.push({ name: `${base}_part${pad(j, total)}.pdf`, pages: Array.from({ length: Math.min(k, n - s) }, (_, q) => s + q) });
+                    } else if (mode === 'ranges') {
+                        const parts = value.split(/[;\n]+/).map(p => p.trim()).filter(Boolean);
+                        if (!parts.length) { alert('Enter ranges separated by semicolons, e.g. 1-3; 4-10; 11-end'); return; }
+                        parts.forEach((p, j) => {
+                            const { pages } = parsePageRanges(p, n);
+                            if (pages.length) groups.push({ name: `${base}_${safeName(p.replace(/\s+/g, ''))}.pdf`, pages: pages.map(x => x - 1) });
+                        });
+                        groups.forEach((g, j) => g.name = `${pad(j + 1, groups.length)} ${g.name}`);
+                    } else if (mode === 'size') {
+                        const maxMB = parseFloat(value);
+                        if (!(maxMB > 0)) { alert('Enter the largest size each file may be, in MB, e.g. 9.5'); return; }
+                        const limit = maxMB * 1024 * 1024;
+                        // Measure each page on its own (an over-estimate, since shared fonts are
+                        // counted per page), then pack greedily and verify each part.
+                        const sizes = [];
+                        for (let i = 0; i < n; i++) {
+                            splitStatus.textContent = `Measuring page ${i + 1}/${n}…`;
+                            const d = await PDFLib.PDFDocument.create();
+                            const [pg] = await d.copyPages(src, [i]);
+                            d.addPage(pg);
+                            sizes.push((await d.save()).length);
+                            if (i % 5 === 4) await yieldToUI();
+                        }
+                        let cur = [], curSize = 0;
+                        sizes.forEach((sz, i) => {
+                            if (cur.length && curSize + sz > limit) { groups.push({ pages: cur }); cur = []; curSize = 0; }
+                            cur.push(i); curSize += sz;
+                        });
+                        if (cur.length) groups.push({ pages: cur });
+                        groups.forEach((g, j) => g.name = `${base}_part${pad(j + 1, groups.length)}.pdf`);
+                    }
+                    if (!groups.length) { alert('Nothing to split — check the values you entered.'); return; }
+                    const out = [], used = new Set();
+                    let oversized = 0;
+                    for (let j = 0; j < groups.length; j++) {
+                        splitStatus.textContent = `Creating file ${j + 1}/${groups.length}…`;
+                        const d = await PDFLib.PDFDocument.create();
+                        const copied = await d.copyPages(src, groups[j].pages);
+                        copied.forEach(pg => d.addPage(pg));
+                        d.setProducer('MergeMaster PDF 4');
+                        const bytes = await finalizeForDownload(await d.save());
+                        if (mode === 'size' && bytes.length > maxSizeBytes(value)) oversized++;
+                        let name = groups[j].name, q = 2;
+                        while (used.has(name.toLowerCase())) name = groups[j].name.replace(/\.pdf$/, ` (${q++}).pdf`);
+                        used.add(name.toLowerCase());
+                        out.push({ name, data: bytes });
+                        await yieldToUI();
+                    }
+                    if (out.length === 1) downloadBlob(new Blob([out[0].data], { type: 'application/pdf' }), out[0].name);
+                    else downloadBlob(makeZip(out), `${base}_split.zip`);
+                    splitStatus.textContent = `✓ ${out.length} file${out.length === 1 ? '' : 's'} created` +
+                        (oversized ? ` · ${oversized} single page${oversized === 1 ? ' is' : 's are'} larger than the limit on ${oversized === 1 ? 'its' : 'their'} own` : '');
+                } catch (err) {
+                    console.error('Split failed:', err);
+                    splitStatus.textContent = '';
+                    alert('Could not split the PDF: ' + describeError(err));
+                } finally {
+                    btnSplit.disabled = false;
+                }
+            }
+            const maxSizeBytes = (v) => parseFloat(v) * 1024 * 1024;
+            btnSplit.addEventListener('click', splitResult);
+
+            // ---------- Undo / redo (file order + every page edit) ----------
+            const btnUndo = document.getElementById('btnUndo');
+            const btnRedo = document.getElementById('btnRedo');
+            const btnPmUndo = document.getElementById('btnPmUndo');
+            const btnPmRedo = document.getElementById('btnPmRedo');
+            const undoStack = [], redoStack = [];
+            function snapshotState() {
+                return {
+                    files: files.slice(),
+                    states: new Map(files.map(f => [f, {
+                        deleted: new Set(f.pageStates.deleted), rotations: new Map(f.pageStates.rotations),
+                        order: (f.pageStates.order || []).slice(), nextBlankId: f.pageStates.nextBlankId,
+                        blankPagesAfter: f.blankPagesAfter,
+                        inserted: new Map(f.pageStates.inserted || []),
+                        insertedSources: (f.pageStates.insertedSources || []).slice(),
+                    }])),
+                };
+            }
+            let historyCurrent = snapshotState();
+            function updateHistoryButtons() {
+                btnUndo.disabled = btnPmUndo.disabled = !undoStack.length;
+                btnRedo.disabled = btnPmRedo.disabled = !redoStack.length;
+            }
+            function recordChange() {
+                undoStack.push(historyCurrent);
+                if (undoStack.length > 200) undoStack.shift();
+                historyCurrent = snapshotState();
+                redoStack.length = 0;
+                updateHistoryButtons();
+            }
+            function restoreState(snap) {
+                files = snap.files.slice();
+                snap.states.forEach((st, f) => {
+                    f.pageStates.deleted = new Set(st.deleted);
+                    f.pageStates.rotations = new Map(st.rotations);
+                    f.pageStates.order = st.order.slice();
+                    f.pageStates.nextBlankId = st.nextBlankId;
+                    f.blankPagesAfter = st.blankPagesAfter;
+                    f.pageStates.inserted = new Map(st.inserted);
+                    f.pageStates.insertedSources = st.insertedSources.slice();
+                });
+                historyCurrent = snap;
+                hideResult();
+                renderFileList();
+                updateUI();
+                if (pageModal.classList.contains('visible')) {
+                    const e = currentPageManagerEntry();
+                    if (e && files.includes(e)) renderPageGrid(e); else closePageManager();
+                }
+                updateHistoryButtons();
+            }
+            function undo() { if (!undoStack.length) return; redoStack.push(historyCurrent); restoreState(undoStack.pop()); }
+            function redo() { if (!redoStack.length) return; undoStack.push(historyCurrent); restoreState(redoStack.pop()); }
+            [btnUndo, btnPmUndo].forEach(b => b.addEventListener('click', undo));
+            [btnRedo, btnPmRedo].forEach(b => b.addEventListener('click', redo));
+            document.addEventListener('keydown', (e) => {
+                if (!(e.metaKey || e.ctrlKey) || editModal.classList.contains('visible')) return;
+                const t = e.target;
+                if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+                const k = e.key.toLowerCase();
+                if (k === 'z' && !e.shiftKey) { e.preventDefault(); undo(); }
+                else if ((k === 'z' && e.shiftKey) || k === 'y') { e.preventDefault(); redo(); }
+            });
+
+            // ---------- Sort ----------
+            const sortFilesSel = document.getElementById('sortFiles');
+            sortFilesSel.addEventListener('change', () => {
+                const mode = sortFilesSel.value;
+                sortFilesSel.value = '';
+                if (!mode || files.length < 2) return;
+                const lm = (f) => (f.file && f.file.lastModified) || 0;
+                const cmp = {
+                    'name-asc': (a, b) => collator.compare(a.name, b.name),
+                    'name-desc': (a, b) => collator.compare(b.name, a.name),
+                    'date-old': (a, b) => lm(a) - lm(b),
+                    'date-new': (a, b) => lm(b) - lm(a),
+                    'size-desc': (a, b) => b.size - a.size,
+                    'size-asc': (a, b) => a.size - b.size,
+                }[mode];
+                files.sort(cmp);
+                recordChange();
+                renderFileList();
+                hideResult();
+            });
+
+            // ---------- Thumbnails & blank-page detection ----------
+            async function getPageThumb(entry, pageNum) {
+                if (!entry.thumbs) entry.thumbs = new Map();
+                let c = entry.thumbs.get(pageNum);
+                if (c) return c;
+                const pdf = await getEntryPdfJs(entry);
+                const page = await pdf.getPage(pageNum);
+                const viewport = page.getViewport({ scale: 0.3 });
+                c = document.createElement('canvas');
+                c.width = Math.ceil(viewport.width);
+                c.height = Math.ceil(viewport.height);
+                await page.render({ canvasContext: c.getContext('2d'), viewport }).promise;
+                entry.thumbs.set(pageNum, c);
+                return c;
+            }
+            function isCanvasBlank(c) {
+                const w = c.width, h = c.height;
+                if (!w || !h) return false;
+                const data = c.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, w, h).data;
+                // Ignore a thin border, where scanners leave edge shadows.
+                const mx = Math.floor(w * 0.05), my = Math.floor(h * 0.05);
+                let ink = 0, total = 0;
+                for (let y = my; y < h - my; y++) {
+                    for (let x = mx; x < w - mx; x++) {
+                        const i = (y * w + x) * 4;
+                        total++;
+                        if (data[i + 3] > 32 && 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2] < 190) ink++;
+                    }
+                }
+                return total > 0 && ink / total < 0.0012;
+            }
+            async function findBlankPages(entry, onProgress) {
+                const found = [];
+                for (let p = 1; p <= entry.pageCount; p++) {
+                    if (entry.pageStates.deleted.has(p)) continue;
+                    onProgress && onProgress(p, entry.pageCount);
+                    try { if (isCanvasBlank(await getPageThumb(entry, p))) found.push(p); }
+                    catch (err) { console.warn('Blank check failed on page', p, err); }
+                    if (p % 4 === 0) await yieldToUI();
+                }
+                return found;
+            }
+            document.getElementById('btnFindBlanks').addEventListener('click', async (ev) => {
+                const entry = currentPageManagerEntry();
+                if (!entry) return;
+                const btn = ev.currentTarget;
+                btn.disabled = true;
+                const label = btn.textContent;
+                try {
+                    const found = await findBlankPages(entry, (p, t) => { btn.textContent = `Scanning ${p}/${t}…`; });
+                    if (!found.length) { pageManagerSummary.textContent = 'No blank pages found in this file.'; return; }
+                    found.forEach(p => entry.pageStates.deleted.add(p));
+                    pageStateChanged(entry);
+                    pageManagerSummary.textContent = `Marked ${found.length} blank page${found.length === 1 ? '' : 's'} as deleted (p. ${found.join(', ')}). Use Restore or ↶ to undo.`;
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = label;
+                }
+            });
+            document.getElementById('btnFindBlanksAll').addEventListener('click', async (ev) => {
+                const btn = ev.currentTarget;
+                const ready = files.filter(f => f.pdfDoc && !f.error);
+                if (!ready.length) return;
+                btn.disabled = true;
+                let total = 0;
+                const changed = [];
+                try {
+                    for (const entry of ready) {
+                        const found = await findBlankPages(entry, (p, t) => { fileToolStatus.textContent = `Scanning “${entry.name}” — page ${p}/${t}…`; });
+                        if (found.length) { found.forEach(p => entry.pageStates.deleted.add(p)); total += found.length; changed.push(`${entry.name}: ${found.length}`); }
+                    }
+                    if (total) { recordChange(); hideResult(); renderFileList(); updateUI(); }
+                    fileToolStatus.textContent = total
+                        ? `🧹 Marked ${total} blank page${total === 1 ? '' : 's'} as deleted (${changed.join(' · ')}). Undo with ↶ or review in 📝.`
+                        : 'No blank pages found.';
+                } finally {
+                    btn.disabled = false;
+                }
+            });
+
+            // ---------- Folder drop & paste ----------
+            async function collectDroppedFiles(dt) {
+                const entries = dt.items ? Array.from(dt.items).map(it => it.webkitGetAsEntry && it.webkitGetAsEntry()).filter(Boolean) : [];
+                const plain = Array.from(dt.files || []);
+                if (!entries.some(e => e.isDirectory)) return plain;
+                const out = [];
+                const walk = async (entry, path) => {
+                    if (entry.name.startsWith('.')) return;
+                    if (entry.isFile) {
+                        const f = await new Promise((res, rej) => entry.file(res, rej));
+                        out.push({ f, path: path + f.name });
+                    } else if (entry.isDirectory) {
+                        const reader = entry.createReader();
+                        const all = [];
+                        let batch;
+                        do { batch = await new Promise((res, rej) => reader.readEntries(res, rej)); all.push(...batch); } while (batch.length);
+                        for (const e of all) await walk(e, path + entry.name + '/');
+                    }
+                };
+                for (const e of entries) await walk(e, '');
+                out.sort((a, b) => collator.compare(a.path, b.path));
+                return out.map(o => o.f).filter(f => isPdfFile(f) || isImageFile(f));
+            }
+            document.addEventListener('paste', (e) => {
+                const t = e.target;
+                if (t && (t.isContentEditable || /^(INPUT|TEXTAREA)$/.test(t.tagName))) return;
+                if (editModal.classList.contains('visible') || !e.clipboardData) return;
+                const list = Array.from(e.clipboardData.files || []);
+                if (!list.length) return;
+                e.preventDefault();
+                const stamp = new Date().toTimeString().slice(0, 8).replace(/:/g, '.');
+                addFiles(list.map((f, k) => (!f.name || /^image\.\w+$/.test(f.name))
+                    ? new File([f], `Pasted ${stamp}${list.length > 1 ? '-' + (k + 1) : ''}.${(f.type.split('/')[1] || 'png')}`, { type: f.type, lastModified: Date.now() })
+                    : f));
+            });
 
             // ============ MERGE LOGIC ============
             // New: progress bar for large multi-file merges — previously a single spinner
@@ -2593,63 +3505,110 @@
 
                 try {
                     const mergedPdf = await PDFLib.PDFDocument.create();
+                    const mergeMode = document.getElementById('mergeMode').value;
 
-                    // Copy pages from each file, applying deletions/rotations/reordering
-                    for (const fileEntry of files) {
-                        const srcDoc = fileEntry.pdfDoc;
+                    // 1) Build each file's page sequence. All of a file's pages are copied in ONE
+                    //    copyPages call, so fonts and images shared between its pages are stored
+                    //    once — copying page-by-page (as v3 did) duplicated them on every page.
+                    const sequences = [];
+                    for (let fi = 0; fi < files.length; fi++) {
+                        const fileEntry = files[fi];
+                        const srcDoc = await getMergeSource(fileEntry);
                         const totalPages = srcDoc.getPageCount();
-                        // New: pages can be drag-reordered within a file in the page manager, and
-                        // the order array can also contain user-inserted blank-page markers
-                        // (negative ids) anywhere in the sequence — fall back to natural order,
-                        // validated by counting real (positive) page references rather than raw
-                        // array length, since blanks legitimately make it longer than totalPages.
                         const positiveCount = (fileEntry.pageStates.order || []).filter(n => n > 0).length;
                         const order = (fileEntry.pageStates.order && positiveCount === totalPages)
                             ? fileEntry.pageStates.order
                             : Array.from({ length: totalPages }, (_, idx) => idx + 1);
-                        // Reference page size for any blank pages, mid-sequence or at the end —
-                        // use the file's own first page so blanks match its dimensions rather
-                        // than a hardcoded size.
                         const blankPageSize = totalPages > 0 ? srcDoc.getPage(0).getSize() : { width: 612, height: 792 };
+                        const wanted = order.filter(i => i > 0 && !fileEntry.pageStates.deleted.has(i));
+                        const copied = wanted.length ? await mergedPdf.copyPages(srcDoc, wanted.map(i => i - 1)) : [];
+                        const byNum = new Map(wanted.map((n, k) => [n, copied[k]]));
+                        // Pages inserted from other PDFs/pictures: one copy call per source file.
+                        const insMap = fileEntry.pageStates.inserted instanceof Map ? fileEntry.pageStates.inserted : new Map();
+                        const insCopied = new Map();
+                        const bySrc = new Map();
+                        order.filter(i => insMap.has(i)).forEach(id => {
+                            const inf = insMap.get(id);
+                            if (!bySrc.has(inf.src)) bySrc.set(inf.src, []);
+                            bySrc.get(inf.src).push(id);
+                        });
+                        for (const [src, ids] of bySrc) {
+                            const pgs = await mergedPdf.copyPages(src.doc, ids.map(id => insMap.get(id).page - 1));
+                            ids.forEach((id, k) => insCopied.set(id, pgs[k]));
+                        }
+                        const seq = [];
                         for (const i of order) {
-                            const insertedInfo = i < 0 && fileEntry.pageStates.inserted ? fileEntry.pageStates.inserted.get(i) : null;
-                            if (insertedInfo) {
-                                // Page inserted from another PDF or picture.
-                                const [insPage] = await mergedPdf.copyPages(insertedInfo.src.doc, [insertedInfo.page - 1]);
+                            if (insCopied.has(i)) {
+                                const pg = insCopied.get(i);
                                 const insRot = fileEntry.pageStates.rotations.get(i) || 0;
-                                if (insRot) insPage.setRotation(PDFLib.degrees(insPage.getRotation().angle + insRot));
-                                mergedPdf.addPage(insPage);
-                                await tickMergeProgress();
+                                if (insRot) pg.setRotation(PDFLib.degrees(pg.getRotation().angle + insRot));
+                                seq.push({ page: pg, fi, src: null });
                                 continue;
                             }
-                            if (i < 0) {
-                                // User-inserted blank page marker from the page manager.
-                                mergedPdf.addPage([blankPageSize.width, blankPageSize.height]);
-                                await tickMergeProgress();
-                                continue;
-                            }
-                            if (fileEntry.pageStates.deleted.has(i)) continue;
-                            const [copiedPage] = await mergedPdf.copyPages(srcDoc, [i - 1]);
+                            if (i < 0) { seq.push({ blank: true, size: blankPageSize, fi }); continue; }
+                            const pg = byNum.get(i);
+                            if (!pg) continue;
                             const rotation = fileEntry.pageStates.rotations.get(i) || 0;
-                            if (rotation !== 0) {
-                                const currentRotation = copiedPage.getRotation().angle;
-                                copiedPage.setRotation(PDFLib.degrees(currentRotation + rotation));
-                            }
-                            mergedPdf.addPage(copiedPage);
-                            await tickMergeProgress();
+                            if (rotation !== 0) pg.setRotation(PDFLib.degrees(pg.getRotation().angle + rotation));
+                            seq.push({ page: pg, fi, src: i });
                         }
-                        // Blank pages appended after this whole file (quick file-list control,
-                        // now supporting a count rather than just a single on/off toggle).
-                        const blankAfterCount = Math.max(0, fileEntry.blankPagesAfter || 0);
-                        for (let b = 0; b < blankAfterCount; b++) {
-                            mergedPdf.addPage([blankPageSize.width, blankPageSize.height]);
-                            await tickMergeProgress();
+                        for (let b = 0; b < Math.max(0, fileEntry.blankPagesAfter || 0); b++) seq.push({ blank: true, size: blankPageSize, fi });
+                        sequences.push(seq);
+                        await yieldToUI();
+                    }
+
+                    // 2) Combine the sequences: append, interleave, or collate a duplex scan.
+                    let combined = [];
+                    const interleave = (lists) => {
+                        const out = [];
+                        const max = Math.max(0, ...lists.map(l => l.length));
+                        for (let k = 0; k < max; k++) lists.forEach(l => { if (l[k]) out.push(l[k]); });
+                        return out;
+                    };
+                    if (mergeMode === 'interleave' && sequences.length > 1) combined = interleave(sequences);
+                    else if (mergeMode === 'duplex' && sequences.length > 1) {
+                        // Pairs of files: (fronts, backs). Backs come off the scanner last page
+                        // first, so they're reversed before interleaving.
+                        for (let k = 0; k < sequences.length; k += 2) {
+                            combined.push(...interleave([sequences[k], (sequences[k + 1] || []).slice().reverse()]));
                         }
+                    } else combined = sequences.flat();
+
+                    const pageMeta = [];   // per output page: { fi, src } — source file index & original page
+                    for (const it of combined) {
+                        if (it.blank) mergedPdf.addPage([it.size.width, it.size.height]);
+                        else mergedPdf.addPage(it.page);
+                        pageMeta.push({ fi: it.fi, src: it.src || null });
+                        await tickMergeProgress();
+                    }
+
+                    // 3) Optional: put every page on one paper size (scaled to fit, centred).
+                    const sizeMode = document.getElementById('pageSizeMode').value;
+                    if (sizeMode !== 'keep') {
+                        mergeProgressText.textContent = 'Resizing pages…';
+                        await normalizePageSizes(mergedPdf, sizeMode);
+                    }
+
+                    // 4) Optional: re-compress photos and scans (text stays vector).
+                    let compressStats = null;
+                    const compressLevel = document.getElementById('compressLevel').value;
+                    if (compressLevel !== 'off') {
+                        mergeProgressWrap.style.display = 'block';
+                        compressStats = await compressImages(mergedPdf, compressLevel, (done, total) => {
+                            mergeProgressText.textContent = `Optimising images… ${done}/${total}`;
+                        });
                     }
 
                     // One text renderer per document: embeds Helvetica once and handles text
                     // Helvetica can't encode (e.g. Chinese) by drawing it as an image instead.
                     const textRenderer = await makeTextRenderer(mergedPdf);
+
+                    // 5) Optional: clickable table of contents at the front.
+                    let tocCount = 0;
+                    if (document.getElementById('chkToc').checked) {
+                        tocCount = await insertTocPages(mergedPdf, pageMeta, textRenderer, sizeMode);
+                        for (let k = 0; k < tocCount; k++) pageMeta.unshift({ fi: null, src: null, toc: true });
+                    }
 
                     // Apply watermark (text or image) — centred on each page as the reader sees
                     // it, including rotated pages.
@@ -2742,10 +3701,37 @@
                     // title when the file is shared or printed.
                     const metaTitle = document.getElementById('metaTitle').value.trim();
                     const metaAuthor = document.getElementById('metaAuthor').value.trim();
+                    const metaSubject = document.getElementById('metaSubject').value.trim();
+                    const metaKeywords = document.getElementById('metaKeywords').value.split(',').map(k => k.trim()).filter(Boolean);
+
+                    // Headers, footers & Bates numbering (six slots, with tokens).
+                    if (document.getElementById('chkHeaderFooter').checked) {
+                        await applyHeadersFooters(mergedPdf, pageMeta, textRenderer, metaTitle);
+                    }
+
+                    // Page labels: the viewer's page box shows the printed numbers
+                    // (front matter as i, ii, iii), like Acrobat's "Number Pages".
+                    if (chkPageNumbers.checked && document.getElementById('chkPageLabels').checked) {
+                        const skip = Math.max(0, parseInt(document.getElementById('pageNumberSkip').value) || 0);
+                        const start = parseInt(document.getElementById('pageNumberStart').value);
+                        setPageLabels(mergedPdf, Math.min(skip, mergedPdf.getPageCount()), isNaN(start) ? 1 : start);
+                    }
+
+                    // Bookmarks: one per source file, with each file's own bookmarks nested.
+                    if (document.getElementById('chkBookmarks').checked || document.getElementById('chkKeepBookmarks').checked || tocCount) {
+                        mergeProgressText.textContent = 'Building bookmarks…';
+                        const tree = await buildOutlineTree(pageMeta, tocCount);
+                        writeOutline(mergedPdf, tree);
+                    }
+
                     if (metaTitle) mergedPdf.setTitle(metaTitle, { showInWindowTitleBar: true });
                     if (metaAuthor) mergedPdf.setAuthor(metaAuthor);
-                    mergedPdf.setProducer('MergeMaster PDF');
-                    mergedPdf.setCreator('MergeMaster PDF');
+                    if (metaSubject) mergedPdf.setSubject(metaSubject);
+                    if (metaKeywords.length) mergedPdf.setKeywords(metaKeywords);
+                    mergedPdf.setProducer('MergeMaster PDF 4');
+                    mergedPdf.setCreator('MergeMaster PDF 4');
+                    mergedPdf.setCreationDate(new Date());
+                    mergedPdf.setModificationDate(new Date());
 
                     // Save an unprotected working copy first. Password protection is applied
                     // only to the downloaded file, so the preview, the text editor and page
@@ -2758,6 +3744,17 @@
                     mergedPdfBytes = await finalizeForDownload(workingPdfBytes);
                     if (mergeEncryptOptions) await tickMergeProgress();
                     hasUndownloadedResult = true;
+                    lastMerge = { pageMeta, names: files.map(f => f.name) };
+                    const inputBytes = files.reduce((t, f) => t + (f.size || 0), 0);
+                    const parts = [`${pageMeta.length} page${pageMeta.length === 1 ? '' : 's'}`, formatFileSize(mergedPdfBytes.length)];
+                    if (inputBytes) {
+                        const pct = Math.round((1 - mergedPdfBytes.length / inputBytes) * 100);
+                        parts.push(`inputs ${formatFileSize(inputBytes)}${pct > 0 ? ` → ${pct}% smaller` : ''}`);
+                    }
+                    if (compressStats && compressStats.count) parts.push(`${compressStats.count} image${compressStats.count === 1 ? '' : 's'} optimised (−${formatFileSize(compressStats.saved)})`);
+                    else if (compressStats) parts.push('no images needed optimising');
+                    if (mergedPdfIsEncrypted) parts.push('🔒 password-protected');
+                    resultStats.textContent = parts.join(' · ');
 
                     // Show result and preview
                     resultSection.classList.add('visible');
@@ -2819,7 +3816,8 @@
                         slot.style.height = Math.round(baseVp.height) + 'px';
                         const label = document.createElement('span');
                         label.className = 'preview-page-label';
-                        label.textContent = i;
+                        label.textContent = `preview · ${i} of ${pdf.numPages}`;
+                        label.title = 'Shown in this preview only — not added to your PDF';
                         slot.appendChild(label);
                         frag.appendChild(slot);
                     }
@@ -2912,7 +3910,8 @@
             dropZone.addEventListener('drop', (e) => {
                 e.preventDefault();
                 dropZone.classList.remove('dragover');
-                if (e.dataTransfer.files.length > 0) addFiles(e.dataTransfer.files);
+                collectDroppedFiles(e.dataTransfer).then(list => { if (list.length) addFiles(list); })
+                    .catch(err => { console.error(err); if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files); });
             });
             btnClearAll.addEventListener('click', clearAllFiles);
             btnReverseOrder.addEventListener('click', reverseFiles);
